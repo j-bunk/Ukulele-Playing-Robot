@@ -26,6 +26,7 @@ void powerMotor (string m1, const int DEGREES, const int POW, const int RETURNPO
     {}
     motor[m1]=0;
 }
+//The RETURNPOW is to ensure it
 
 void powerMotorBack (string m1, const int DEGREES, const int POW, const int RETURNPOW)
 {
@@ -43,8 +44,8 @@ void powerMotorBack (string m1, const int DEGREES, const int POW, const int RETU
 
 int songChoice (string SColor)
 {
-    //red is 5, blue is 2
-    while (SensorValue[SColor]==ColorBlackValue) //don't know the value and black is the color of the back of the box
+    //red is 5 and blue is 2
+    while (SensorValue[SColor]==ColorBlackValue) //don't know the value and black is the color of the back of the coin box
     {}
     if (SensorValue[SColor]==5)
     {
@@ -56,9 +57,9 @@ int songChoice (string SColor)
     }
 }
 
-void ReadFile (SColor)
+void ReadFile (string SColor)
 {
-    int choice=songChoice ();
+    int choice= songChoice (SColor);
     if (choice==1)
     {
         //Read song 1
@@ -72,6 +73,8 @@ void ReadFile (SColor)
 task main()
 {
     init(S1, S2, S3);
+    songChoice(S3);
+    ReadFile(S3);
     //Prompt song choice display after someone is within a certain distance
         //Insert Ultrasonic function / prompt song choice function
         //Insert Song choice function
@@ -93,3 +96,5 @@ task main()
     displayBigTextLine(4, "Program ended");
     wait1Msec(3000);
 }
+
+//edit
