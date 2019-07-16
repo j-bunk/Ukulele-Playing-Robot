@@ -4,16 +4,14 @@
 
 void init(string STouch, string SUS, string SColor)
 {
-    //Are the first 2 lines necessary?
-    motor[motorA]=motor[motorB]=motor[motorC]=0;
-    nMotorEncoder[motorA]=nMotorEncoder[motorB]=nMotorEncoder[motorC]=nMotorEncoder[motorD]=0;
     SensorType[STouch]=sensorEV3_Touch;
     //ultrasonic and color too?
     SensorType[SUS]=sensorEV3_Ultrasonic;
     SensorType[SColor]=sensorEV3_Color;
+    SensorMode[SColor]=sensorEV3Color_Color;//check this
 }
 
-void powerMotor (string m1, const int DEGREES, const int POW, const int RETURNPOW)
+void powerMotor (string m1, int DEGREES, int POW, int RETURNPOW)
 {
     nMotorEncoder[m1]=0;
     motor[m1]=POW;
@@ -63,17 +61,19 @@ void ReadFile (string SColor)
     if (choice==1)
     {
         //Read song 1
+        POWSTRUM=20;
     }
     else if (choice==2)
     {
         //Read song 2
+        POWSTRUM=40;
     }
 }
 
 task main()
 {
     init(S1, S2, S3);
-    songChoice(S3);
+    //US function
     ReadFile(S3);
     //Prompt song choice display after someone is within a certain distance
         //Insert Ultrasonic function / prompt song choice function
@@ -83,10 +83,11 @@ task main()
 
         //DEGREESSTRUM values might depend on song choice so if statement might be needed
         const int DEGREESSTRUM=55, DEGREESCHORD=90, DEGREESPISTON=180;
-        const int POWSTRUM=50, POWCHORD=60, POWPISTON=40;
+        const int POWCHORD=60, POWPISTON=40, POWSTRUM=0;
         const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
 
-    while (SensorValue[S1]==0)
+
+    while (SensorValue[S1]==0 || //file read in -1)
     {   
         //bunch of if statements that call these functions based on the input file
         powerMotor(motorA, DEGREESSTRUM, POWSTRUM, RETURNPOW);
