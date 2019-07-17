@@ -24,7 +24,7 @@ void powerMotor (int m1, int DEGREES, int POW, int RETURNPOW)
     {}
     motor[m1]=0;
 }
-//The RETURNPOW is to ensure it
+//The RETURNPOW is to ensure it stops at the right place
 
 void powerMotorBack (string m1, const int DEGREES, const int POW, const int RETURNPOW)
 {
