@@ -1,17 +1,17 @@
 //Work in RobotC then copy and paste your code here and push to Github
 //If your working on a specific function you can create a branch work on it then merge it
 //Initialization function
-
-void init(string STouch, string SUS, string SColor)
+int POWSTRUM=0;
+void init(int STouch, int SUS, int SColor)
 {
     SensorType[STouch]=sensorEV3_Touch;
     //ultrasonic and color too?
     SensorType[SUS]=sensorEV3_Ultrasonic;
     SensorType[SColor]=sensorEV3_Color;
-    SensorMode[SColor]=sensorEV3Color_Color;//check this
+    SensorMode[SColor]=modeEV3Color_Color;
 }
 
-void powerMotor (string m1, int DEGREES, int POW, int RETURNPOW)
+void powerMotor (int m1, int DEGREES, int POW, int RETURNPOW)
 {
     nMotorEncoder[m1]=0;
     motor[m1]=POW;
@@ -40,7 +40,7 @@ void powerMotorBack (string m1, const int DEGREES, const int POW, const int RETU
     motor[m1]=0;
 }
 
-int songChoice (string SColor)
+int songChoice (int SColor)
 {
     //red is 5 and blue is 2
     while (SensorValue[SColor]==ColorBlackValue) //don't know the value and black is the color of the back of the coin box
@@ -55,7 +55,7 @@ int songChoice (string SColor)
     }
 }
 
-void ReadFile (string SColor)
+void ReadFile (int SColor)
 {
     int choice= songChoice (SColor);
     if (choice==1)
@@ -82,18 +82,20 @@ task main()
         //Does the song choice determine the values of the constant?
 
         //DEGREESSTRUM values might depend on song choice so if statement might be needed
-        const int DEGREESSTRUM=55, DEGREESCHORD=90, DEGREESPISTON=180;
-        const int POWCHORD=60, POWPISTON=40, POWSTRUM=0;
+        const int DEGREESSTRUM=55, DEGREESPICK=90; DEGREESCHORD=90, DEGREESPISTON=180;
+        const int POWCHORD=60, POWPISTON=40, POWPICK=20;
         const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
-
+        POWSTRUM=0;
 
     while (SensorValue[S1]==0 || //file read in -1)
-    {   
+    {
         //bunch of if statements that call these functions based on the input file
         powerMotor(motorA, DEGREESSTRUM, POWSTRUM, RETURNPOW);
         powerMotor(motorB, DEGREESCHORD, POWCHORD, RETURNPOW);
         powerMotor(motorC, DEGREESPISTON, POWPISTON, RETURNPOW);
+        powerMotor(motorD, DEGREESPICK, POWPICK, RETURNPOW);
     }
+
     displayBigTextLine(4, "Program ended");
     wait1Msec(3000);
 }
