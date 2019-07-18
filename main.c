@@ -58,7 +58,7 @@ string songChoice (int SColor)
 #include "Song1.c"
 #include "Song2.c"
 
-void ReadFile (int SColor)
+void readFile (int SColor)
 {
     string songFile = songChoice(SColor);
     TfileHandle fin;
@@ -96,7 +96,6 @@ task main()
         const int DEGREESSTRUM=55, DEGREESPICK=90, DEGREESCHORD=90, DEGREESPISTON=180;
         const int POWCHORD=60, POWPISTON=40, POWPICK=20;
         const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
-        int powStrum =0;
 
     while (SensorValue[S1]==0) // ||file read in -1)
     {
