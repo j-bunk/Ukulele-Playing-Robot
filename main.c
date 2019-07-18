@@ -1,7 +1,7 @@
 //Work in RobotC then copy and paste your code here and push to Github
 //If your working on a specific function you can create a branch work on it then merge it
 //Initialization function
-int POWSTRUM=0;
+int powStrum=0;
 void init(int STouch, int SUS, int SColor)
 {
     SensorType[STouch]=sensorEV3_Touch;
@@ -40,33 +40,44 @@ void powerMotorBack (int m1, const int DEGREES, const int POW, const int RETURNP
     motor[m1]=0;
 }
 
-int songChoice (int SColor)
+string songChoice (int SColor)
 {
     //red is 5 and blue is 2
     while (SensorValue[SColor]==ColorBlackValue) //don't know the value and black is the color of the back of the coin box
     {}
     if (SensorValue[SColor]==5)
     {
-        return 1;
+        return "Song1.c";
     }
     else if (SensorValue[SColor]==2)//or another more distinct color
     {
-        return 2;
+        return "Song2.c";
     }
 }
 
+#include "Song1.c"
+#include "Song2.c"
+
 void ReadFile (int SColor)
 {
-    int choice= songChoice (SColor);
-    if (choice==1)
+    string songFile = songChoice(SColor);
+    TfileHandle fin;
+    
+    bool fileCheck = openReadPC(fin,songFile);
+    if(!fileCheck)
     {
-        //Read song 1
-        POWSTRUM=20;
+        displayString(5, "Song cannot be found");
+        wait1Msec(5000);
     }
-    else if (choice==2)
+    else
     {
-        //Read song 2
-        POWSTRUM=40;
+        string songName = "";
+        int bpm = 0;
+        readTextPC(fin, songName);
+        displayString(5, "Now Playing: %s", songName);
+        //wait here? or will there be other things that need to display?
+        readIntPC(fin, bpm);
+        //powStrum = bpm conversion function
     }
 }
 
@@ -85,13 +96,13 @@ task main()
         const int DEGREESSTRUM=55, DEGREESPICK=90, DEGREESCHORD=90, DEGREESPISTON=180;
         const int POWCHORD=60, POWPISTON=40, POWPICK=20;
         const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
-        POWSTRUM=0;
+        int powStrum =0;
 
     while (SensorValue[S1]==0) // ||file read in -1)
     {
         //bunch of if statements that call these functions based on the input file
-        powerMotor(motorA, DEGREESSTRUM, POWSTRUM, RETURNPOW);
-        powerMotorBack(motorA, DEGREESSTRUM, POWSTRUM, RETURNPOW);
+        powerMotor(motorA, DEGREESSTRUM, powStrum, RETURNPOW);
+        powerMotorBack(motorA, DEGREESSTRUM, powStrum, RETURNPOW);
         powerMotor(motorB, DEGREESCHORD, POWCHORD, RETURNPOW);
         powerMotorBack(motorB, DEGREESCHORD, POWCHORD, RETURNPOW);
         powerMotor(motorC, DEGREESPISTON, POWPISTON, RETURNPOW);
