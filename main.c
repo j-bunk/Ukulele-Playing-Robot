@@ -3,6 +3,7 @@
 //Initialization function
 int powStrum=0;
 string song = "";
+float minToMSec = 60000;
 void init(int STouch, int SUS, int SColor)
 {
     SensorType[STouch]=sensorEV3_Touch;
@@ -11,7 +12,6 @@ void init(int STouch, int SUS, int SColor)
     SensorType[SColor]=sensorEV3_Color;
     SensorMode[SColor]=modeEV3Color_Color;
 }
-
 void powerMotor (int m1, int DEGREES, int POW, int RETURNPOW)
 {
     nMotorEncoder[m1]=0;
@@ -20,15 +20,34 @@ void powerMotor (int m1, int DEGREES, int POW, int RETURNPOW)
     {}
     motor[m1]=0;
     wait10Msec(5);
-    motor[m1]=-RETURNPOW; //returnpow should be negative and small/slow
+    motor[m1]=-RETURNPOW;
     while (nMotorEncoder[m1]>DEGREES)
     {}
     motor[m1]=0;
+    wait10Msec(5);
+}
+
+void powerMotorStrum (int m1, int DEGREES, int POW, int RETURNPOW, float beat)
+{
+		clearTimer(T1);
+    nMotorEncoder[m1]=0;
+    motor[m1]=POW;
+    while(nMotorEncoder[m1]<DEGREES)
+    {}
+    motor[m1]=0;
+    wait10Msec(5);
+    motor[m1]=-RETURNPOW;
+    while (nMotorEncoder[m1]>DEGREES)
+    {}
+    motor[m1]=0;
+    while(time1[T1] < (beat/2))
+    {}
 }
 //The RETURNPOW is to ensure it stops at the right place
 
 void powerMotorBack (int m1, const int DEGREES, const int POW, const int RETURNPOW)
 {
+		clearTimer(T1);
     nMotorEncoder[m1]=0;
     motor[m1]=-POW;//
     while(nMotorEncoder[m1]>DEGREES)//e.g -180
@@ -39,6 +58,23 @@ void powerMotorBack (int m1, const int DEGREES, const int POW, const int RETURNP
     while (nMotorEncoder[m1]<DEGREES)
     {}
     motor[m1]=0;
+    wait10Msec(5);
+}
+void powerMotorBackStrum (int m1, const int DEGREES, const int POW, const int RETURNPOW, float beat)
+{
+		clearTimer(T1);
+    nMotorEncoder[m1]=0;
+    motor[m1]=-POW;//
+    while(nMotorEncoder[m1]>DEGREES)//e.g -180
+    {}
+    motor[m1]=0;
+    wait10Msec(5);
+    motor[m1]=RETURNPOW; //returnpow should be negative and small/slow
+    while (nMotorEncoder[m1]<DEGREES)
+    {}
+    motor[m1]=0;
+    while(time1[T1] < beat/2)
+    {}
 }
 
 /*void songChoice (int SColor, string&song)
@@ -59,12 +95,19 @@ void powerMotorBack (int m1, const int DEGREES, const int POW, const int RETURNP
 /*#include "Song1.c";
 #include "Song2.c";
 
-void readFile (int SColor)
+float readFile (int SColor)
 {
     songChoice(SColor, song);
     TFileHandle fin;
 
     bool fileCheck = openReadPC(fin,song);
+=======
+    int beat = 0;
+    string songFile = songChoice(SColor);
+    TfileHandle fin;
+
+    bool fileCheck = openReadPC(fin,songFile);
+>>>>>>> 676f04dadfa0aa0eb775e0f0de177e67467eef79
     if(!fileCheck)
     {
         displayString(5, "Song cannot be found");
@@ -78,15 +121,25 @@ void readFile (int SColor)
         displayString(5, "Now Playing: %s", songName);
         //wait here? or will there be other things that need to display?
         readIntPC(fin, bpm);
+        beat = bpmCalc(bpm, minToMSec);
         //powStrum = bpm conversion function
     }
+    return beat;
 }
 */
+int bpmCalc(float bpm, float minToMSec)
+{
+    float beat = 0;
+    beat = minToMSec / bpm;
+    return beat;
+}
 task main()
 {
     init(S1, S2, S3);
     //US function
     //ReadFile(S3);
+    //int beat = 0;
+    //beat = ReadFile(S3);
     //Prompt song choice display after someone is within a certain distance
         //Insert Ultrasonic function / prompt song choice function
         //Insert Song choice function
@@ -94,14 +147,17 @@ task main()
         //Does the song choice determine the values of the constant?
 
         //DEGREESSTRUM values might depend on song choice so if statement might be needed
-        const int DEGREESSTRUM=55, DEGREESPICK=90, DEGREESCHORD=90, DEGREESPISTON=180;
-        const int POWCHORD=60, POWPISTON=40, POWPICK=20;
+        const int DEGREESSTRUM=55, DEGREESPICK=60, DEGREESCHORD=90, DEGREESPISTON=180;
+        const int POWCHORD=60, POWPISTON=40, POWPICK=40;
         const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
 
     while (SensorValue[S1]==0) // ||file read in -1)
     {
-    	powerMotor(motorB, 60, 20, RETURNPOW);
-    	powerMotorBack(motorB, -60, 20, RETURNPOW);
+			float beat=bpmCalc(20,minToMSec);
+			powerMotor(motorA, DEGREESPICK, POWPICK, pick)
+    	powerMotorStrum(motorB, 60, 25, RETURNPOW, beat);
+    	powerMotorBackStrum(motorB, -60, 25, RETURNPOW, beat);
+
 
         //bunch of if statements that call these functions based on the input file
        /* powerMotor(motorA, DEGREESSTRUM, powStrum, RETURNPOW);
@@ -113,6 +169,8 @@ task main()
         powerMotor(motorD, DEGREESPICK, POWPICK, RETURNPOW);
         powerMotorBack(motorD, DEGREESPICK, POWPICK, RETURNPOW);
         */
+
+        time1[T1] = 0;
     }
     displayBigTextLine(4, "Program ended");
     wait1Msec(3000);
