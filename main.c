@@ -1,13 +1,12 @@
 //Work in RobotC then copy and paste your code here and push to Github
 //If your working on a specific function you can create a branch work on it then merge it
-//Initialization function
+
 int powStrum=0;
 string song = "";
 float minToMSec = 60000;
 void init(int STouch, int SUS, int SColor)
 {
     SensorType[STouch]=sensorEV3_Touch;
-    //ultrasonic and color too?
     SensorType[SUS]=sensorEV3_Ultrasonic;
     SensorType[SColor]=sensorEV3_Color;
     SensorMode[SColor]=modeEV3Color_Color;
@@ -133,6 +132,57 @@ int bpmCalc(float bpm, float minToMSec)
     beat = minToMSec / bpm;
     return beat;
 }
+
+int rotationChord (char & initialPosition, char newPosition)
+{
+	//the first initialPosition is read in from the input file in main
+	//and then after it's read in we run this function
+	//order of sides: C then D then E then F
+	if(initialPosition==newPosition)
+	{
+		return 0;
+	}
+	else if (initialPosition=='C' && newPosition=='D' ||
+					 initialPosition=='D' && newPosition =='E' ||
+					 initialPosition=='E' && newPosition=='F' ||
+					 initialPosition=='F' && newPosition=='C')
+		{
+			return 90;
+		}
+
+	else if (initialPosition=='C' && newPosition=='E' ||
+					 initialPosition=='D' && newPosition =='F' ||
+					 initialPosition=='E' && newPosition=='C' ||
+					 initialPosition=='F' && newPosition=='D')
+		{
+			return	180;
+		}
+	else if (initialPosition=='C' && newPosition=='F' ||
+					 initialPosition=='D' && newPosition =='C' ||
+					 initialPosition=='E' && newPosition=='D' ||
+					 initialPosition=='F' && newPosition=='E')
+		{
+		  return 270;//or -90?
+		}
+		else
+		{
+			return 0;
+		}
+		initialPosition=newPosition;
+}
+
+void powerChord (int motorD, int DEGREESPISTON, int POWPISTON,
+int POWCHORD, int RETURNPOW, char initialPosition, char newPosition)
+{
+	int rotation = rotationChord (initialPosition, newPosition);
+	powerMotor(motorC, DEGREESPISTON, POWPISTON, RETURNPOW);
+	powerMotor(motorD, rotation, POWCHORD,RETURNPOW);
+	powerMotorBack(motorC, -DEGREESPISTON, POWPISTON, RETURNPOW);
+
+	//do I include an if statement that doesn't move it when newposition=initialposition
+}
+
+
 task main()
 {
     init(S1, S2, S3);
@@ -147,16 +197,21 @@ task main()
         //Does the song choice determine the values of the constant?
 
         //DEGREESSTRUM values might depend on song choice so if statement might be needed
-        const int DEGREESSTRUM=55, DEGREESPICK=60, DEGREESCHORD=90, DEGREESPISTON=180;
+        const int DEGREESSTRUM=55, DEGREESPICK=10, DEGREESCHORD=90, DEGREESPISTON=180;
         const int POWCHORD=60, POWPISTON=40, POWPICK=40;
         const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
 
     while (SensorValue[S1]==0) // ||file read in -1)
     {
-			float beat=bpmCalc(20,minToMSec);
-			powerMotor(motorA, DEGREESPICK, POWPICK, pick)
-    	powerMotorStrum(motorB, 60, 25, RETURNPOW, beat);
-    	powerMotorBackStrum(motorB, -60, 25, RETURNPOW, beat);
+			/*float beat=bpmCalc(20,minToMSec);
+			powerMotor(motorA, DEGREESPICK, POWPICK, RETURNPOW)
+    	powerMotorStrum(motorB, DEGREESSTRUM, 25, RETURNPOW, beat);
+    	powerMotorBackStrum(motorB, -DEGREESSTRUM, 25, RETURNPOW, beat);
+    	*/
+    	char initialPosition='C';
+    	char newPosition='D';
+    	powerChord (motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
+    	initialPosition, newPosition)
 
 
         //bunch of if statements that call these functions based on the input file
