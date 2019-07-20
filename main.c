@@ -2,6 +2,7 @@
 //If your working on a specific function you can create a branch work on it then merge it
 //Initialization function
 int powStrum=0;
+string song = "";
 void init(int STouch, int SUS, int SColor)
 {
     SensorType[STouch]=sensorEV3_Touch;
@@ -18,7 +19,7 @@ void powerMotor (int m1, int DEGREES, int POW, int RETURNPOW)
     while(nMotorEncoder[m1]<DEGREES)
     {}
     motor[m1]=0;
-    wait10Msec(50);
+    wait10Msec(5);
     motor[m1]=-RETURNPOW; //returnpow should be negative and small/slow
     while (nMotorEncoder[m1]>DEGREES)
     {}
@@ -33,37 +34,37 @@ void powerMotorBack (int m1, const int DEGREES, const int POW, const int RETURNP
     while(nMotorEncoder[m1]>DEGREES)//e.g -180
     {}
     motor[m1]=0;
-    wait10Msec(50);
+    wait10Msec(5);
     motor[m1]=RETURNPOW; //returnpow should be negative and small/slow
     while (nMotorEncoder[m1]<DEGREES)
     {}
     motor[m1]=0;
 }
 
-string songChoice (int SColor)
+/*void songChoice (int SColor, string&song)
 {
     //red is 5 and blue is 2
-    while (SensorValue[SColor]==ColorBlackValue) //don't know the value and black is the color of the back of the coin box
+    while (SensorValue[SColor]==(int)colorBlack) //don't know the value and black is the color of the back of the coin box
     {}
     if (SensorValue[SColor]==5)
     {
-        return "Song1.c";
+        song = "Song1.c";
     }
     else if (SensorValue[SColor]==2)//or another more distinct color
     {
-        return "Song2.c";
+        song="Song2.c";
     }
 }
 
-#include "Song1.c"
-#include "Song2.c"
+/*#include "Song1.c";
+#include "Song2.c";
 
 void readFile (int SColor)
 {
-    string songFile = songChoice(SColor);
-    TfileHandle fin;
-    
-    bool fileCheck = openReadPC(fin,songFile);
+    songChoice(SColor, song);
+    TFileHandle fin;
+
+    bool fileCheck = openReadPC(fin,song);
     if(!fileCheck)
     {
         displayString(5, "Song cannot be found");
@@ -80,12 +81,12 @@ void readFile (int SColor)
         //powStrum = bpm conversion function
     }
 }
-
+*/
 task main()
 {
     init(S1, S2, S3);
     //US function
-    ReadFile(S3);
+    //ReadFile(S3);
     //Prompt song choice display after someone is within a certain distance
         //Insert Ultrasonic function / prompt song choice function
         //Insert Song choice function
@@ -99,8 +100,11 @@ task main()
 
     while (SensorValue[S1]==0) // ||file read in -1)
     {
+    	powerMotor(motorB, 60, 20, RETURNPOW);
+    	powerMotorBack(motorB, -60, 20, RETURNPOW);
+
         //bunch of if statements that call these functions based on the input file
-        powerMotor(motorA, DEGREESSTRUM, powStrum, RETURNPOW);
+       /* powerMotor(motorA, DEGREESSTRUM, powStrum, RETURNPOW);
         powerMotorBack(motorA, DEGREESSTRUM, powStrum, RETURNPOW);
         powerMotor(motorB, DEGREESCHORD, POWCHORD, RETURNPOW);
         powerMotorBack(motorB, DEGREESCHORD, POWCHORD, RETURNPOW);
@@ -108,6 +112,7 @@ task main()
         powerMotorBack(motorC, DEGREESPISTON, POWPISTON, RETURNPOW);
         powerMotor(motorD, DEGREESPICK, POWPICK, RETURNPOW);
         powerMotorBack(motorD, DEGREESPICK, POWPICK, RETURNPOW);
+        */
     }
     displayBigTextLine(4, "Program ended");
     wait1Msec(3000);
