@@ -213,11 +213,12 @@ task main()
 
     while (SensorValue[S1]==0) // ||file read in -1)
     {
-    	//this is just testng stuff
+    	//this is just testing stuff
 			float beat=bpmCalc(20,minToMSec);
-			powerMotor(motorA, DEGREESPICK, POWPICK, RETURNPOW);
+		/*	powerMotor(motorA, DEGREESPICK, POWPICK, RETURNPOW);
     	powerMotorStrum(motorB, DEGREESSTRUM, 25, RETURNPOW, beat);
     	powerMotorBackStrum(motorB, -DEGREESSTRUM, 25, RETURNPOW, beat);
+    	*/
     	char initialPosition='C';
     	char newPosition='D';
     	powerChord (motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
@@ -225,7 +226,7 @@ task main()
 
 
         //bunch of if statements that call these functions based on the input file
-        powerMotor(motorA, DEGREESSTRUM, powStrum, RETURNPOW);
+       /* powerMotor(motorA, DEGREESSTRUM, powStrum, RETURNPOW);
         powerMotorBack(motorA, DEGREESSTRUM, powStrum, RETURNPOW);
         powerMotor(motorB, DEGREESCHORD, POWCHORD, RETURNPOW);
         powerMotorBack(motorB, DEGREESCHORD, POWCHORD, RETURNPOW);
@@ -234,7 +235,7 @@ task main()
         powerMotor(motorD, DEGREESPICK, POWPICK, RETURNPOW);
         powerMotorBack(motorD, DEGREESPICK, POWPICK, RETURNPOW);
 
-
+*/
         time1[T1] = 0;
     }
     displayBigTextLine(4, "Program ended");
