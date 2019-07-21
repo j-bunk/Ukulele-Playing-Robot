@@ -138,6 +138,22 @@ int bpmCalc(float bpm, float minToMSec)
     return beat;
 }
 
+void powerMotorPick(int motorA, int DEGREESPICK, int POWPICK, int RETURNPOW, bool & pick, bool & prevPick)
+{
+		if(pick == prevPick)
+		{}
+		else if(pick == false)
+		{
+			powerMotorBack(motorA, -DEGREESPICK, POWPICK, RETURNPOW);
+		}
+		else
+		{
+			powerMotor(motorA, DEGREESPICK, POWPICK, RETURNPOW);
+		}
+
+		prevPick = pick;
+ }
+
 int rotationChord (char & initialPosition, char newPosition)
 {
 	//this function returns the angle the chord box needs to turn
@@ -208,8 +224,20 @@ task main()
         const int DEGREESSTRUM=55, DEGREESPICK=10, DEGREESCHORD=90, DEGREESPISTON=180;
         const int POWCHORD=60, POWPISTON=40, POWPICK=40;
         const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
-
-
+  	bool pick = true, prevPick = true;
+	
+	while (SensorValue[S1]==0) // ||file read in -1)
+    {
+    	nMotorEncoder[motorA]=0;
+			float beat=bpmCalc(120,minToMSec);
+			pick = false;
+			powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, pick, prevPick);
+    	powerMotorStrum(motorB, 60, 25, RETURNPOW, beat);
+    	pick = true;
+			powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, pick, prevPick);
+    	powerMotorBackStrum(motorB, -60, 25, RETURNPOW, beat);
+ 			time1[T1] = 0;
+    }
 
     while (SensorValue[S1]==0) // ||file read in -1)
     {
