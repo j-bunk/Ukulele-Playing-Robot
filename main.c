@@ -138,22 +138,17 @@ void songChoice (int SColor, string&song)
     }
 }
 
-//display on the screen the name of the song and then will start the program after something is 40 cm away from ultra. 
+//display on the screen the name of the song.
 void waitUltra(int SUS, int SColor)
 {
 	SensorType(SUS)=sensorEV3_Ultrasonic;
 	
-	if(getColorName(SColor)==colorRed)
-	{
-		displayString(3, "Song #1");
-		wait10Msec(5000);
-	}
-	else if(getColorName(SColor)==colorGreen)
-	{
-		displayString(3, "Song #2");
-		wait10Msec(5000);
-	}
 	while(SensorValue(SUS)>=40){}
+	
+	displayString(3, "Green coin is song #1");
+	displayString(5, "Red coin is song #2");
+	displayString(7, "Please insert a coin");
+	wait10Msec(10000);
 }
 
 /*
@@ -275,8 +270,8 @@ task main()
     //ReadFile(S3);
     //int beat = 0;
     //beat = ReadFile(S3);
-    //Prompt song choice display after someone is within a certain distance      
-    //Insert Ultrasonic function / prompt song choice function        waitUltra(SUS, SColor)
+    //Prompt song choice display after someone is within a certain distance       waitUltra(SUS, SColor)
+    //Insert Ultrasonic function / prompt song choice function       
     //Insert Song choice function
     //Insert a read inpput file function
     //Does the song choice determine the values of the constant?
