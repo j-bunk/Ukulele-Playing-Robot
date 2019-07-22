@@ -1,6 +1,48 @@
 //Work in RobotC then copy and paste your code here and push to Github
 //If your working on a specific function you can create a branch work on it then merge it
 
+/* Code I got form James
+1)
+if (usingPreset) //choose a file and open it
+		{
+			string presetFile = "";
+			choosePreset(presetFile);
+
+			TFileHandle fin;
+			bool fileOkay = openReadPC(fin, presetFile);
+
+			if(!fileOkay)
+				displayString(4, "Error opening file.");
+			else
+				readFile(fin, creamAmount, sugarAmount);
+
+			closeFilePC(fin);
+
+		2)
+			#include "PC_FileIO.c"
+
+task main()
+{
+	TFileHandle fout;
+	bool fileOkay = openWritePC(fout, "batteryOutput.txt");
+	eraseDisplay();
+
+	while (fileOkay)
+	{
+		wait1Msec(5000);
+		writeLongPC(fout, nImmediateBatteryLevel);
+		writeEndlPC(fout);
+	}
+
+	3)
+	void writeFile(TFileHandle fout, int cream, int sugar)
+{
+	writeLongPC(fout, cream);
+	writeEndlPC(fout);
+	writeLongPC(fout, sugar);
+}
+*/
+
 int powStrum=0;
 string song = "";
 float minToMSec = 60000;
@@ -85,12 +127,12 @@ void powerMotorBackStrum (int m1, const int DEGREES, const int POW, const int RE
 void songChoice (int SColor, string&song)
 {
     //red is 5 and blue is 2
-    while (SensorValue[SColor]==(int)colorBlack)
+    while (SensorValue[SColor]==(int)colorWhite)
     if (SensorValue[SColor]==(int)colorRed)
     {
         song = "Song1.c";
     }
-    else if (SensorValue[SColor]==(int)colorYellow) //or another more distinct color
+    else if (SensorValue[SColor]==(int)colorGreen) //or another more distinct color
     {
         song="Song2.c";
     }
@@ -199,11 +241,12 @@ void powerChord (int motorD, int DEGREESPISTON, int POWPISTON,
 								 char newPosition)
 {
 	int rotation = rotationChord (initialPosition, newPosition);
-	powerMotor(motorC, DEGREESPISTON, POWPISTON, RETURNPOW);
-	powerMotor(motorD, rotation, POWCHORD,RETURNPOW);
-	powerMotorBack(motorC, -DEGREESPISTON, POWPISTON, RETURNPOW);
-
-	//do I include an if statement that doesn't move it when newposition=initialposition?
+	if (rotation!=0)
+	{
+		powerMotor(motorC, DEGREESPISTON, POWPISTON, RETURNPOW);
+		powerMotor(motorD, rotation, POWCHORD,RETURNPOW);
+		powerMotorBack(motorC, -DEGREESPISTON, POWPISTON, RETURNPOW);
+	}
 }
 
 
@@ -221,36 +264,40 @@ task main()
     //Does the song choice determine the values of the constant?
 
         //DEGREESSTRUM values might depend on song choice so if statement might be needed
-        const int DEGREESSTRUM=55, DEGREESPICK=10, DEGREESCHORD=90, DEGREESPISTON=180;
-        const int POWCHORD=60, POWPISTON=40, POWPICK=40;
+        const int DEGREESSTRUM=55, DEGREESPICK=35, DEGREESCHORD=90, DEGREESPISTON=180;
+        const int POWCHORD=100, POWPISTON=100, POWPICK=70;
         const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
   	bool pick = true, prevPick = true;
-	
+
 	while (SensorValue[S1]==0) // ||file read in -1)
     {
+    	//wait10Msec(5);
     	nMotorEncoder[motorA]=0;
-			float beat=bpmCalc(120,minToMSec);
+			float beat=bpmCalc(72,minToMSec);
 			pick = false;
-			powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, pick, prevPick);
-    	powerMotorStrum(motorB, 60, 25, RETURNPOW, beat);
+			//powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, pick, prevPick);
+		  //wait10Msec(50);
+    	powerMotorStrum(motorB, 45, 25, RETURNPOW, beat);
     	pick = true;
-			powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, pick, prevPick);
-    	powerMotorBackStrum(motorB, -60, 25, RETURNPOW, beat);
- 			time1[T1] = 0;
-    }
+			//powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, pick, prevPick);
+			motor[motorA]=5;
+    	powerMotorBackStrum(motorB, -45, 25, RETURNPOW, beat);
+   	  motor[motorA]=0;
+    	//wait1Msec(5);
 
-    while (SensorValue[S1]==0) // ||file read in -1)
-    {
+ 			time1[T1] = 0;
+			char initialPosition='C';
+    	char newPosition='D';
+    	powerChord (motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
+    	initialPosition, newPosition);
+
     	//this is just testing stuff
-			float beat=bpmCalc(20,minToMSec);
+			//float beat=bpmCalc(20,minToMSec);
 		/*	powerMotor(motorA, DEGREESPICK, POWPICK, RETURNPOW);
     	powerMotorStrum(motorB, DEGREESSTRUM, 25, RETURNPOW, beat);
     	powerMotorBackStrum(motorB, -DEGREESSTRUM, 25, RETURNPOW, beat);
     	*/
-    	char initialPosition='C';
-    	char newPosition='D';
-    	powerChord (motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
-    	initialPosition, newPosition);
+
 
 
         //bunch of if statements that call these functions based on the input file
@@ -263,8 +310,9 @@ task main()
         powerMotor(motorD, DEGREESPICK, POWPICK, RETURNPOW);
         powerMotorBack(motorD, DEGREESPICK, POWPICK, RETURNPOW);
 
-*/
+
         time1[T1] = 0;
+        */
     }
     displayBigTextLine(4, "Program ended");
     wait1Msec(3000);
