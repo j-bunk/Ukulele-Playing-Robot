@@ -26,7 +26,7 @@ if (usingPreset) //choose a file and open it
 int powStrum=0;
 string song = "";
 float minToMSec = 60000;
-//#include "PC_FileIO.c"
+#include "PC_FileIO.c"
 
 void init(int STouch, int SUS, int SColor)
 {
@@ -110,11 +110,11 @@ void songChoice (int SColor, string&song)
     while (SensorValue[SColor]==(int)colorWhite)
     if (SensorValue[SColor]==(int)colorRed)
     {
-        song = "Song1.c";
+        song = "Riptide_Chords.txt";
     }
     else if (SensorValue[SColor]==(int)colorGreen) //or another more distinct color
     {
-        song="Song2.c";
+        song="Im_Yours_Chords.txt";
     }
 }
 
@@ -129,11 +129,12 @@ void waitUltra(int SUS)
 //	wait10Msec(10000);
 }
 
-
-
-/*
-#include "Song1.c";
-#include "Song2.c";
+int bpmCalc(float bpm, float minToMSec)
+{
+    float beat = 0;
+    beat = minToMSec / bpm;
+    return beat;
+}
 
 float readFile (int SColor)
 {
@@ -142,10 +143,8 @@ float readFile (int SColor)
 
     bool fileCheck = openReadPC(fin,song);
     int beat = 0;
-    string songFile = songChoice(SColor);
-    TfileHandle fin;
+    string songFile = song;
 
-    bool fileCheck = openReadPC(fin,songFile);
     if(!fileCheck)
     {
         displayString(5, "Song cannot be found");
@@ -164,14 +163,8 @@ float readFile (int SColor)
     }
     return beat;
 }
-*/
 
-int bpmCalc(float bpm, float minToMSec)
-{
-    float beat = 0;
-    beat = minToMSec / bpm;
-    return beat;
-}
+
 
 void powerMotorPick(int motorA, int DEGREESPICK, int POWPICK, int RETURNPOW, bool & pick, bool & prevPick)
 {
@@ -263,7 +256,7 @@ task main()
       const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
 			bool pick = true, prevPick = true; //testing
 
-	while (SensorValue[S2]==(int)colorWhite	{}
+	while (SensorValue[S2]==(int)colorWhite)	{}
 	songChoice (S2, song);
 	eraseDisplay();
 	displayBigTextLine (3,"Press the start/stop button to play");
