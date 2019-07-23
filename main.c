@@ -21,26 +21,6 @@ if (usingPreset) //choose a file and open it
 		2)
 			#include "PC_FileIO.c"
 
-task main()
-{
-	TFileHandle fout;
-	bool fileOkay = openWritePC(fout, "batteryOutput.txt");
-	eraseDisplay();
-
-	while (fileOkay)
-	{
-		wait1Msec(5000);
-		writeLongPC(fout, nImmediateBatteryLevel);
-		writeEndlPC(fout);
-	}
-
-	3)
-	void writeFile(TFileHandle fout, int cream, int sugar)
-{
-	writeLongPC(fout, cream);
-	writeEndlPC(fout);
-	writeLongPC(fout, sugar);
-}
 */
 
 int powStrum=0;
@@ -127,7 +107,6 @@ void powerMotorBackStrum (int m1, const int DEGREES, const int POW, const int RE
 
 void songChoice (int SColor, string&song)
 {
-    //red is 5 and blue is 2
     while (SensorValue[SColor]==(int)colorWhite)
     if (SensorValue[SColor]==(int)colorRed)
     {
@@ -140,15 +119,17 @@ void songChoice (int SColor, string&song)
 }
 
 //display on the screen the name of the song.
-void waitUltra(int SUS, int SColor)
+void waitUltra(int SUS)
 {
 	while(SensorValue(SUS)>=40)
 	{}
 	displayString(3, "Green coin is song #1");
 	displayString(5, "Red coin is song #2");
 	displayString(7, "Please insert a coin");
-	//wait10Msec(10000);
+//	wait10Msec(10000);
 }
+
+
 
 /*
 #include "Song1.c";
@@ -268,21 +249,37 @@ void powerChord (int motorC, int motorD, int DEGREESPISTON, int POWPISTON,
 task main()
 {
     init(S1, S2, S3); //STouch=S1, SUS=S2, SColor=S3
-    //US function
+    waitUltra(S2);
+
     //ReadFile(S3);
     //int beat = 0;
     //beat = ReadFile(S3);
-    //Prompt song choice display after someone is within a certain distance waitUltra(SUS, SColor)
-    //Insert Ultrasonic function / prompt song choice function
-    //Insert Song choice function
-    //Insert a read inpput file function
-    //Does the song choice determine the values of the constant?
 
-        //DEGREESSTRUM values might depend on song choice so if statement might be needed
-        const int DEGREESSTRUM=55, DEGREESPICK=35, DEGREESCHORD=90, DEGREESPISTON=180;
-        const int POWCHORD=100, POWPISTON=100, POWPICK=70;
-        const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
-  		bool pick = true, prevPick = true;
+    //Insert a read input file function
+    //DEGREESSTRUM values might depend on song choice so if statement might be needed
+
+      const int DEGREESSTRUM=55, DEGREESPICK=35, DEGREESCHORD=90, DEGREESPISTON=180;
+      const int POWCHORD=100, POWPISTON=100, POWPICK=70;
+      const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
+			bool pick = true, prevPick = true; //testing
+
+	while (SensorValue[S2]==(int)colorWhite	{}
+	songChoice (S2, song);
+	eraseDisplay();
+	displayBigTextLine (3,"Press the start/stop button to play");
+
+	while (SensorValue[S1]==0){}
+	while (SensorValue[S1]==1){}
+	//You insert the coin and then press the start button to start
+  displayBigTextLine(3, "Now Playing:");
+	if (song=="Riptide_Chords.txt")
+	{
+		displayBigTextLine(6, "Riptide");
+	}
+	else
+	{
+		displayBigTextLine(6, "I'm Yours");
+	}
 
 	while (SensorValue[S1]==0) // ||file read in -1)
     {
@@ -290,6 +287,7 @@ task main()
     	//motorB: Strumming Mechanism
     	//motorC: Piston Mechanism
     	//motorD: Rotation/Chord Mechanism
+
     	//wait10Msec(5);
     	nMotorEncoder[motorA]=0;
 			float beat=bpmCalc(72,minToMSec);
