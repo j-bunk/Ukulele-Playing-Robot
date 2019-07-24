@@ -32,7 +32,7 @@ void powerMotor (int m1, int DEGREES, int POW, int RETURNPOW)
 
 void powerMotorStrum (int m1, int DEGREES, int POW, int RETURNPOW, int beat)
 {
-		clearTimer(T1);
+	clearTimer(T1);
     /*nMotorEncoder[m1]=0;
     motor[m1]=POW;
     while(nMotorEncoder[m1]<DEGREES)
