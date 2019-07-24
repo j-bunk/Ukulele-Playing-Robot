@@ -1,28 +1,6 @@
 //Work in RobotC then copy and paste your code here and push to Github
 //If your working on a specific function you can create a branch work on it then merge it
 
-/* Code I got from James
-1)
-if (usingPreset) //choose a file and open it
-		{
-			string presetFile = "";
-			choosePreset(presetFile);
-
-			TFileHandle fin;
-			bool fileOkay = openReadPC(fin, presetFile);
-
-			if(!fileOkay)
-				displayString(4, "Error opening file.");
-			else
-				readFile(fin, creamAmount, sugarAmount);
-
-			closeFilePC(fin);
-
-		2)
-			#include "PC_FileIO.c"
-
-*/
-
 int powStrum=0;
 string song = "";
 float minToMSec = 60000;
