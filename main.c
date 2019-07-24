@@ -3,6 +3,7 @@
 
 int powStrum=0;
 string song = "";
+char one, two, three, four;
 const int MINTOMSEC = 60000;
 #include "PC_FileIO.c"
 
@@ -134,6 +135,10 @@ int readFile ()
         displayBigTextLine(2, "Up next: %s", songName);
         readIntPC(fin, bpm);
         beat = bpmCalc(bpm);
+	readTextPC(fin, one);
+	readTextPC(fin, two);
+	readTextPC(fin, three);
+	readTextPC(fin, four);
     }
     return beat;
 }
@@ -167,27 +172,27 @@ int rotationChord (char & initialPosition, char newPosition)
 	{
 		return 0;
 	}
-	else if (initialPosition=='1' && newPosition=='2' ||
-		 initialPosition=='2' && newPosition=='3' ||
-		 initialPosition=='3' && newPosition=='4' ||
-		 initialPosition=='4' && newPosition=='1')
+	else if (initialPosition==one && newPosition==two ||
+		 initialPosition==two && newPosition==three ||
+		 initialPosition==three && newPosition==four ||
+		 initialPosition==four && newPosition==one)
 		{
 			return 90;
 			initialPosition=newPosition;
 		}
 
-	else if (initialPosition=='1' && newPosition=='3' ||
-		 initialPosition=='2' && newPosition=='4' ||
-		 initialPosition=='3' && newPosition=='1' ||
-		 initialPosition=='4' && newPosition=='2')
+	else if (initialPosition==one && newPosition==three ||
+		 initialPosition==two && newPosition==four ||
+		 initialPosition==three && newPosition==one ||
+		 initialPosition==four && newPosition==two)
 		{
 			return	180;
 			initialPosition=newPosition;
 		}
-	else if (initialPosition=='1' && newPosition=='4' ||
-		 initialPosition=='2' && newPosition=='1' ||
-		 initialPosition=='3' && newPosition=='2' ||
-		 initialPosition=='4' && newPosition=='3')
+	else if (initialPosition==one && newPosition==four ||
+		 initialPosition==two && newPosition==one ||
+		 initialPosition==three && newPosition==two ||
+		 initialPosition==four && newPosition==three)
 		{
 			return -90;
 		 	initialPosition=newPosition;
