@@ -92,7 +92,7 @@ void powerMotorBackStrum (int m1, const int DEGREES, const int POW, const int RE
 
 void waitUltra(int SUS)
 {
-	while(SensorValue(SUS)>=40)
+	while(SensorValue(SUS)>=80)
 	{}
 	displayString(3, "Green card is Riptide");
 	displayString(5, "Red card is I'm Yours");
@@ -284,4 +284,5 @@ task main()
 	    eraseDisplay();
 	    displayBigTextLine(4, "Program ended");
 	    wait1Msec(3000);
+	    //End by calibrating
 }
