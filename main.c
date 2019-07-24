@@ -3,7 +3,7 @@
 
 int powStrum=0;
 string song = "";
-float minToMSec = 60000;
+const int MINTOMSEC = 60000;
 #include "PC_FileIO.c"
 
 void init(int STouch, int SUS, int SColor)
@@ -29,10 +29,10 @@ void powerMotor (int m1, int DEGREES, int POW, int RETURNPOW)
     wait10Msec(5);
 }
 
-void powerMotorStrum (int m1, int DEGREES, int POW, int RETURNPOW, float beat)
+void powerMotorStrum (int m1, int DEGREES, int POW, int RETURNPOW, int beat)
 {
 		clearTimer(T1);
-    nMotorEncoder[m1]=0;
+    /*nMotorEncoder[m1]=0;
     motor[m1]=POW;
     while(nMotorEncoder[m1]<DEGREES)
     {}
@@ -41,7 +41,8 @@ void powerMotorStrum (int m1, int DEGREES, int POW, int RETURNPOW, float beat)
     motor[m1]=-RETURNPOW;
     while (nMotorEncoder[m1]>DEGREES)
     {}
-    motor[m1]=0;
+    motor[m1]=0;*/
+	powMotor(m1,DEGREES,POW,RETURNPOW);
     while(time1[T1] < (beat/2))
     {}
 }
@@ -66,10 +67,10 @@ void powerMotorBack (int m1, const int DEGREES, const int POW, const int RETURNP
     wait10Msec(5);
 }
 
-void powerMotorBackStrum (int m1, const int DEGREES, const int POW, const int RETURNPOW, float beat)
+void powerMotorBackStrum (int m1, const int DEGREES, const int POW, const int RETURNPOW, int beat)
 {
 		clearTimer(T1);
-    nMotorEncoder[m1]=0;
+    /*nMotorEncoder[m1]=0;
     motor[m1]=-POW;//
     while(nMotorEncoder[m1]>DEGREES)//e.g -180
     {}
@@ -78,21 +79,22 @@ void powerMotorBackStrum (int m1, const int DEGREES, const int POW, const int RE
     motor[m1]=RETURNPOW; //returnpow should be negative and small/slow
     while (nMotorEncoder[m1]<DEGREES)
     {}
-    motor[m1]=0;
+    motor[m1]=0;*/
+	powerMotorBack(m1,DEGREES,POW,RETURNPOW);
     while(time1[T1] < beat/2)
     {}
 }
 
 void songChoice (int SColor, string&song)
 {
-    while (SensorValue[SColor]==(int)colorWhite)
+    while (SensorValue[SColor]==(int)colorWhite) {}
     if (SensorValue[SColor]==(int)colorRed)
     {
-        song = "Riptide_Chords.txt";
+        song = "\"Red.txt\"";
     }
     else if (SensorValue[SColor]==(int)colorGreen) //or another more distinct color
     {
-        song="Im_Yours_Chords.txt";
+        song="\"Green.txt\"";
     }
 }
 
@@ -104,40 +106,35 @@ void waitUltra(int SUS)
 	displayString(3, "Green coin is song #1");
 	displayString(5, "Red coin is song #2");
 	displayString(7, "Please insert a coin");
-//	wait10Msec(10000);
 }
 
-int bpmCalc(float bpm, float minToMSec)
+int bpmCalc(int bpm)
 {
-    float beat = 0;
-    beat = minToMSec / bpm;
+    int beat = 0;
+    beat = MINTOMSEC/ bpm;
     return beat;
 }
 
-float readFile (int SColor)
+int readFile ()
 {
-    songChoice(SColor, song);
     TFileHandle fin;
 
     bool fileCheck = openReadPC(fin,song);
-    int beat = 0;
-    string songFile = song;
 
     if(!fileCheck)
     {
         displayString(5, "Song cannot be found");
         wait1Msec(5000);
+	return -1;
     }
     else
     {
         string songName = "";
         int bpm = 0;
         readTextPC(fin, songName);
-        displayString(5, "Now Playing: %s", songName);
-        //wait here? or will there be other things that need to display?
+        displayBigTextLine(2, "Up next: %s", songName);
         readIntPC(fin, bpm);
-        beat = bpmCalc(bpm, minToMSec);
-        //powStrum = bpm conversion function
+        int beat = bpmCalc(bpm);
     }
     return beat;
 }
@@ -234,15 +231,14 @@ task main()
       const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
 			bool pick = true, prevPick = true; //testing
 
-	while (SensorValue[S2]==(int)colorWhite)	{}
-	songChoice (S2, song);
-	eraseDisplay();
-	displayBigTextLine (3,"Press the start/stop button to play");
+	songChoice (S3, song);
+	readFile();
+	displayBigTextLine (6,"Press the start/stop button to play");
 
 	while (SensorValue[S1]==0){}
 	while (SensorValue[S1]==1){}
 	//You insert the coin and then press the start button to start
-  displayBigTextLine(3, "Now Playing:");
+  /*displayBigTextLine(3, "Now Playing:");
 	if (song=="Riptide_Chords.txt")
 	{
 		displayBigTextLine(6, "Riptide");
@@ -251,7 +247,7 @@ task main()
 	{
 		displayBigTextLine(6, "I'm Yours");
 	}
-
+*/
 	while (SensorValue[S1]==0) // ||file read in -1)
     {
     	//motorA: Pick Mechanism
