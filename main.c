@@ -3,6 +3,7 @@
 
 int powStrum=0;
 string song = "";
+char one, two, three, four;
 const int MINTOMSEC = 60000;
 #include "PC_FileIO.c"
 
@@ -51,9 +52,10 @@ void powerMotorStrum (int m1, int DEGREES, int POW, int RETURNPOW, int beat)
 
 //Input exact same parameters as powerMotor function but put a negative sign before degrees
 //I can change this and have the negative sign in the function itself if that makes it more intuitive
+
 void powerMotorBack (int m1, const int DEGREES, const int POW, const int RETURNPOW)
 {
-		clearTimer(T1);
+	clearTimer(T1);
     nMotorEncoder[m1]=0;
     motor[m1]=-POW;
     while(nMotorEncoder[m1]>DEGREES)//e.g -180
@@ -69,7 +71,7 @@ void powerMotorBack (int m1, const int DEGREES, const int POW, const int RETURNP
 
 void powerMotorBackStrum (int m1, const int DEGREES, const int POW, const int RETURNPOW, int beat)
 {
-		clearTimer(T1);
+	clearTimer(T1);
     /*nMotorEncoder[m1]=0;
     motor[m1]=-POW;//
     while(nMotorEncoder[m1]>DEGREES)//e.g -180
@@ -80,7 +82,7 @@ void powerMotorBackStrum (int m1, const int DEGREES, const int POW, const int RE
     while (nMotorEncoder[m1]<DEGREES)
     {}
     motor[m1]=0;*/
-		powerMotorBack(m1,DEGREES,POW,RETURNPOW);
+	powerMotorBack(m1,DEGREES,POW,RETURNPOW);
     while(time1[T1] < beat/2)
     {}
 }
@@ -102,8 +104,8 @@ void waitUltra(int SUS)
 {
 	while(SensorValue(SUS)>=40)
 	{}
-	displayString(3, "Green coin is song #1");
-	displayString(5, "Red coin is song #2");
+	displayString(3, "Green coin is Riptide");
+	displayString(5, "Red coin is I'm Yours");
 	displayString(7, "Please insert a coin");
 }
 
@@ -115,8 +117,7 @@ float bpmCalc(float bpm)
 int readFile ()
 {
     TFileHandle fin;
-    int beat=0;
-
+    float beat=0;
     bool fileCheck = openReadPC(fin,song);
 
     if(!fileCheck)
@@ -133,6 +134,11 @@ int readFile ()
         displayBigTextLine(2, "Up next: %s", songName);
         readIntPC(fin, bpm);
         beat = bpmCalc(bpm);
+
+	readTextPC(fin, one);
+	readTextPC(fin, two);
+	readTextPC(fin, three);
+	readTextPC(fin, four);
     }
     return beat;
 }
@@ -141,18 +147,18 @@ int readFile ()
 
 void powerMotorPick(int motorA, int DEGREESPICK, int POWPICK, int RETURNPOW, bool & pick, bool & prevPick)
 {
-		if(pick == prevPick)
-		{}
-		else if(pick == false)
-		{
-			powerMotorBack(motorA, -DEGREESPICK, POWPICK, RETURNPOW);
-		}
-		else
-		{
-			powerMotor(motorA, DEGREESPICK, POWPICK, RETURNPOW);
-		}
+	if(pick == prevPick)
+	{}
+	else if(pick == false)
+	{
+		powerMotorBack(motorA, -DEGREESPICK, POWPICK, RETURNPOW);
+	}
+	else
+	{
+		powerMotor(motorA, DEGREESPICK, POWPICK, RETURNPOW);
+	}
 
-		prevPick = pick;
+	prevPick = pick;
  }
 
 int rotationChord (char & initialPosition, char newPosition)
@@ -166,30 +172,30 @@ int rotationChord (char & initialPosition, char newPosition)
 	{
 		return 0;
 	}
-	else if (initialPosition=='C' && newPosition=='D' ||
-					 initialPosition=='D' && newPosition =='E' ||
-					 initialPosition=='E' && newPosition=='F' ||
-					 initialPosition=='F' && newPosition=='C')
+	else if (initialPosition==one && newPosition==two ||
+		 initialPosition==two && newPosition==three ||
+		 initialPosition==three && newPosition==four ||
+		 initialPosition==four && newPosition==one)
 		{
 			return 90;
 			initialPosition=newPosition;
 		}
 
-	else if (initialPosition=='C' && newPosition=='E' ||
-					 initialPosition=='D' && newPosition =='F' ||
-					 initialPosition=='E' && newPosition=='C' ||
-					 initialPosition=='F' && newPosition=='D')
+	else if (initialPosition==one && newPosition==three ||
+		 initialPosition==two && newPosition==four ||
+		 initialPosition==three && newPosition==one ||
+		 initialPosition==four && newPosition==two)
 		{
 			return	180;
 			initialPosition=newPosition;
 		}
-	else if (initialPosition=='C' && newPosition=='F' ||
-					 initialPosition=='D' && newPosition =='C' ||
-					 initialPosition=='E' && newPosition=='D' ||
-					 initialPosition=='F' && newPosition=='E')
+	else if (initialPosition==one && newPosition==four ||
+		 initialPosition==two && newPosition==one ||
+		 initialPosition==three && newPosition==two ||
+		 initialPosition==four && newPosition==three)
 		{
-		  return 270;//or -90?
-		  initialPosition=newPosition;
+			return -90;
+		 	initialPosition=newPosition;
 		}
 		else //newPosition=0 so initialPosition shouldn't change
 		{
@@ -261,21 +267,21 @@ task main()
 	    	//wait10Msec(5);
 
 	    	nMotorEncoder[motorA]=0;
-				float beat=bpmCalc(72);
-				pick = false;
-				//eraseDisplay();
-				//displayString(2,".d%",beat);
-				//wait1Msec(5000);
-				powerMotorPick(motorA, DEGREESPICK, 100, RETURNPOW, pick, prevPick);
+			float beat=bpmCalc(72);
+			pick = false;
+			//eraseDisplay();
+			//displayString(2,".d%",beat);
+			//wait1Msec(5000);
+			powerMotorPick(motorA, DEGREESPICK, 100, RETURNPOW, pick, prevPick);
 	    	powerMotorStrum(motorB, 45, 60, RETURNPOW, beat);
 	    	pick = true;
-				powerMotorPick(motorA, DEGREESPICK, 100, RETURNPOW, pick, prevPick);
-				motor[motorA]=5;
+			powerMotorPick(motorA, DEGREESPICK, 100, RETURNPOW, pick, prevPick);
+			motor[motorA]=5;
 	    	powerMotorBackStrum(motorB, -45, 60, RETURNPOW, beat);
-	   	  motor[motorA]=0;
+	   	  	motor[motorA]=0;
 	    	wait1Msec(5);
 
-	 			time1[T1] = 0;
+	 		time1[T1] = 0;
 			/*	char initialPosition='C';
 	    	char newPosition='D';
 	    	powerChord (motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
