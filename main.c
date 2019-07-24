@@ -42,7 +42,7 @@ void powerMotorStrum (int m1, int DEGREES, int POW, int RETURNPOW, int beat)
     while (nMotorEncoder[m1]>DEGREES)
     {}
     motor[m1]=0;*/
-	powMotor(m1,DEGREES,POW,RETURNPOW);
+		powerMotor(m1,DEGREES,POW,RETURNPOW);
     while(time1[T1] < (beat/2))
     {}
 }
@@ -80,7 +80,7 @@ void powerMotorBackStrum (int m1, const int DEGREES, const int POW, const int RE
     while (nMotorEncoder[m1]<DEGREES)
     {}
     motor[m1]=0;*/
-	powerMotorBack(m1,DEGREES,POW,RETURNPOW);
+		powerMotorBack(m1,DEGREES,POW,RETURNPOW);
     while(time1[T1] < beat/2)
     {}
 }
@@ -98,7 +98,6 @@ void songChoice (int SColor, string&song)
     }
 }
 
-//display on the screen the name of the song.
 void waitUltra(int SUS)
 {
 	while(SensorValue(SUS)>=40)
@@ -108,16 +107,15 @@ void waitUltra(int SUS)
 	displayString(7, "Please insert a coin");
 }
 
-int bpmCalc(int bpm)
+float bpmCalc(float bpm)
 {
-    int beat = 0;
-    beat = MINTOMSEC/ bpm;
-    return beat;
+    return bpm/MINTOMSEC;
 }
 
 int readFile ()
 {
     TFileHandle fin;
+    int beat=0;
 
     bool fileCheck = openReadPC(fin,song);
 
@@ -125,7 +123,7 @@ int readFile ()
     {
         displayString(5, "Song cannot be found");
         wait1Msec(5000);
-	return -1;
+				return -1;
     }
     else
     {
@@ -134,7 +132,7 @@ int readFile ()
         readTextPC(fin, songName);
         displayBigTextLine(2, "Up next: %s", songName);
         readIntPC(fin, bpm);
-        int beat = bpmCalc(bpm);
+        beat = bpmCalc(bpm);
     }
     return beat;
 }
@@ -226,61 +224,70 @@ task main()
     //Insert a read input file function
     //DEGREESSTRUM values might depend on song choice so if statement might be needed
 
-      const int DEGREESSTRUM=55, DEGREESPICK=35, DEGREESCHORD=90, DEGREESPISTON=180;
-      const int POWCHORD=100, POWPISTON=100, POWPICK=70;
-      const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
-			bool pick = true, prevPick = true; //testing
+    const int DEGREESSTRUM=55, DEGREESPICK=35, DEGREESCHORD=90, DEGREESPISTON=180;
+    const int POWCHORD=100, POWPISTON=100, POWPICK=70;
+    const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
+		bool pick = true, prevPick = true; //testing
 
-	songChoice (S3, song);
-	readFile();
-	displayBigTextLine (6,"Press the start/stop button to play");
+		//songChoice (S3, song);
+		//readFile();
+		displayBigTextLine (6,"Press the start/stop button to play");
 
-	while (SensorValue[S1]==0){}
-	while (SensorValue[S1]==1){}
-	//You insert the coin and then press the start button to start
-  /*displayBigTextLine(3, "Now Playing:");
-	if (song=="Riptide_Chords.txt")
-	{
-		displayBigTextLine(6, "Riptide");
-	}
-	else
-	{
-		displayBigTextLine(6, "I'm Yours");
-	}
-*/
-	while (SensorValue[S1]==0) // ||file read in -1)
-    {
-    	//motorA: Pick Mechanism
-    	//motorB: Strumming Mechanism
-    	//motorC: Piston Mechanism
-    	//motorD: Rotation/Chord Mechanism
+		while (SensorValue[S1]==0){}
+		eraseDisplay();
+		while (SensorValue[S1]==1){}
+		displayBigTextLine(3, "WORK BITCH");
+		//You insert the coin and then press the start button to start
+	  /*displayBigTextLine(3, "Now Playing:");
+		if (song=="Riptide_Chords.txt")
+		{
+			displayBigTextLine(6, "Riptide");
+		}
+		else
+		{
+			displayBigTextLine(6, "I'm Yours");
+		}
+	*/
 
-    	//wait10Msec(5);
-    	nMotorEncoder[motorA]=0;
-			float beat=bpmCalc(72,minToMSec);
-			pick = false;
-			//powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, pick, prevPick);
-		  //wait10Msec(50);
-    	powerMotorStrum(motorB, 45, 25, RETURNPOW, beat);
-    	pick = true;
-			//powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, pick, prevPick);
-			motor[motorA]=5;
-    	powerMotorBackStrum(motorB, -45, 25, RETURNPOW, beat);
-   	  motor[motorA]=0;
-    	//wait1Msec(5);
+		while (SensorValue[S1]==0) // ||file read in -1)
+	    {
+	    	eraseDisplay();
+	    	displayBigTextLine(2, "Am i working");
+	    	//wait1Msec(5000);
+	    	//motorA: Pick Mechanism
+	    	//motorB: Strumming Mechanism
+	    	//motorC: Piston Mechanism
+	    	//motorD: Rotation/Chord Mechanism
+	    	//wait10Msec(5);
 
- 			time1[T1] = 0;
-			char initialPosition='C';
-    	char newPosition='D';
-    	powerChord (motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
-    	initialPosition, newPosition);
+	    	nMotorEncoder[motorA]=0;
+				float beat=bpmCalc(72);
+				pick = false;
+				//eraseDisplay();
+				//displayString(2,".d%",beat);
+				//wait1Msec(5000);
+				powerMotorPick(motorA, DEGREESPICK, 100, RETURNPOW, pick, prevPick);
+	    	powerMotorStrum(motorB, 45, 60, RETURNPOW, beat);
+	    	pick = true;
+				powerMotorPick(motorA, DEGREESPICK, 100, RETURNPOW, pick, prevPick);
+				motor[motorA]=5;
+	    	powerMotorBackStrum(motorB, -45, 60, RETURNPOW, beat);
+	   	  motor[motorA]=0;
+	    	wait1Msec(5);
 
-    	//this is just testing stuff
-			//float beat=bpmCalc(20,minToMSec);
-		/*	powerMotor(motorA, DEGREESPICK, POWPICK, RETURNPOW);
-    	powerMotorStrum(motorB, DEGREESSTRUM, 25, RETURNPOW, beat);
-    	powerMotorBackStrum(motorB, -DEGREESSTRUM, 25, RETURNPOW, beat);
-    	*/
+	 			time1[T1] = 0;
+			/*	char initialPosition='C';
+	    	char newPosition='D';
+	    	powerChord (motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
+	    	initialPosition, newPosition);
+	    	*/
+
+	    	//this is just testing stuff
+				//float beat=bpmCalc(20,minToMSec);
+				/*powerMotor(motorA, DEGREESPICK, POWPICK, RETURNPOW);
+	    	powerMotorStrum(motorB, DEGREESSTRUM, 25, RETURNPOW, beat);
+	    	powerMotorBackStrum(motorB, -DEGREESSTRUM, 25, RETURNPOW, beat);
+	    	*/
 
         //bunch of if statements that call these functions based on the input file
        /* powerMotor(motorA, DEGREESSTRUM, powStrum, RETURNPOW);
@@ -293,8 +300,8 @@ task main()
         powerMotorBack(motorD, DEGREESPICK, POWPICK, RETURNPOW);
 
         */
-    }
-    eraseDisplay();
-    displayBigTextLine(4, "Program ended");
-    wait1Msec(3000);
+	    }
+	    eraseDisplay();
+	    displayBigTextLine(4, "Program ended");
+	    wait1Msec(3000);
 }
