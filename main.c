@@ -98,13 +98,12 @@ void songChoice (int SColor, string&song)
     }
 }
 
-//display on the screen the name of the song.
 void waitUltra(int SUS)
 {
 	while(SensorValue(SUS)>=40)
 	{}
-	displayString(3, "Green coin is song #1");
-	displayString(5, "Red coin is song #2");
+	displayString(3, "Green coin is Riptide");
+	displayString(5, "Red coin is I'm Yours");
 	displayString(7, "Please insert a coin");
 }
 
@@ -118,7 +117,7 @@ int bpmCalc(int bpm)
 int readFile ()
 {
     TFileHandle fin;
-
+	int beat = 0;
     bool fileCheck = openReadPC(fin,song);
 
     if(!fileCheck)
@@ -134,7 +133,7 @@ int readFile ()
         readTextPC(fin, songName);
         displayBigTextLine(2, "Up next: %s", songName);
         readIntPC(fin, bpm);
-        int beat = bpmCalc(bpm);
+        beat = bpmCalc(bpm);
     }
     return beat;
 }
@@ -143,18 +142,18 @@ int readFile ()
 
 void powerMotorPick(int motorA, int DEGREESPICK, int POWPICK, int RETURNPOW, bool & pick, bool & prevPick)
 {
-		if(pick == prevPick)
-		{}
-		else if(pick == false)
-		{
-			powerMotorBack(motorA, -DEGREESPICK, POWPICK, RETURNPOW);
-		}
-		else
-		{
-			powerMotor(motorA, DEGREESPICK, POWPICK, RETURNPOW);
-		}
+	if(pick == prevPick)
+	{}
+	else if(pick == false)
+	{
+		powerMotorBack(motorA, -DEGREESPICK, POWPICK, RETURNPOW);
+	}
+	else
+	{
+		powerMotor(motorA, DEGREESPICK, POWPICK, RETURNPOW);
+	}
 
-		prevPick = pick;
+	prevPick = pick;
  }
 
 int rotationChord (char & initialPosition, char newPosition)
@@ -168,30 +167,30 @@ int rotationChord (char & initialPosition, char newPosition)
 	{
 		return 0;
 	}
-	else if (initialPosition=='C' && newPosition=='D' ||
-					 initialPosition=='D' && newPosition =='E' ||
-					 initialPosition=='E' && newPosition=='F' ||
-					 initialPosition=='F' && newPosition=='C')
+	else if (initialPosition=='1' && newPosition=='2' ||
+		 initialPosition=='2' && newPosition=='3' ||
+		 initialPosition=='3' && newPosition=='4' ||
+		 initialPosition=='4' && newPosition=='1')
 		{
 			return 90;
 			initialPosition=newPosition;
 		}
 
-	else if (initialPosition=='C' && newPosition=='E' ||
-					 initialPosition=='D' && newPosition =='F' ||
-					 initialPosition=='E' && newPosition=='C' ||
-					 initialPosition=='F' && newPosition=='D')
+	else if (initialPosition=='1' && newPosition=='3' ||
+		 initialPosition=='2' && newPosition=='4' ||
+		 initialPosition=='3' && newPosition=='1' ||
+		 initialPosition=='4' && newPosition=='2')
 		{
 			return	180;
 			initialPosition=newPosition;
 		}
-	else if (initialPosition=='C' && newPosition=='F' ||
-					 initialPosition=='D' && newPosition =='C' ||
-					 initialPosition=='E' && newPosition=='D' ||
-					 initialPosition=='F' && newPosition=='E')
+	else if (initialPosition=='1' && newPosition=='4' ||
+		 initialPosition=='2' && newPosition=='1' ||
+		 initialPosition=='3' && newPosition=='2' ||
+		 initialPosition=='4' && newPosition=='3')
 		{
-		  return 270;//or -90?
-		  initialPosition=newPosition;
+			return -90;
+		 	initialPosition=newPosition;
 		}
 		else //newPosition=0 so initialPosition shouldn't change
 		{
@@ -219,17 +218,10 @@ task main()
     init(S1, S2, S3); //STouch=S1, SUS=S2, SColor=S3
     waitUltra(S2);
 
-    //ReadFile(S3);
-    //int beat = 0;
-    //beat = ReadFile(S3);
-
-    //Insert a read input file function
-    //DEGREESSTRUM values might depend on song choice so if statement might be needed
-
       const int DEGREESSTRUM=55, DEGREESPICK=35, DEGREESCHORD=90, DEGREESPISTON=180;
       const int POWCHORD=100, POWPISTON=100, POWPICK=70;
-      const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
-			bool pick = true, prevPick = true; //testing
+      const int RETURNPOW=10; 
+	bool pick = true, prevPick = true; 
 
 	songChoice (S3, song);
 	readFile();
@@ -237,7 +229,6 @@ task main()
 
 	while (SensorValue[S1]==0){}
 	while (SensorValue[S1]==1){}
-	//You insert the coin and then press the start button to start
   /*displayBigTextLine(3, "Now Playing:");
 	if (song=="Riptide_Chords.txt")
 	{
@@ -255,44 +246,16 @@ task main()
     	//motorC: Piston Mechanism
     	//motorD: Rotation/Chord Mechanism
 
-    	//wait10Msec(5);
-    	nMotorEncoder[motorA]=0;
-			float beat=bpmCalc(72,minToMSec);
-			pick = false;
-			//powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, pick, prevPick);
-		  //wait10Msec(50);
-    	powerMotorStrum(motorB, 45, 25, RETURNPOW, beat);
-    	pick = true;
-			//powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, pick, prevPick);
-			motor[motorA]=5;
-    	powerMotorBackStrum(motorB, -45, 25, RETURNPOW, beat);
-   	  motor[motorA]=0;
-    	//wait1Msec(5);
-
- 			time1[T1] = 0;
-			char initialPosition='C';
-    	char newPosition='D';
-    	powerChord (motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
-    	initialPosition, newPosition);
-
-    	//this is just testing stuff
-			//float beat=bpmCalc(20,minToMSec);
-		/*	powerMotor(motorA, DEGREESPICK, POWPICK, RETURNPOW);
-    	powerMotorStrum(motorB, DEGREESSTRUM, 25, RETURNPOW, beat);
-    	powerMotorBackStrum(motorB, -DEGREESSTRUM, 25, RETURNPOW, beat);
-    	*/
-
-        //bunch of if statements that call these functions based on the input file
-       /* powerMotor(motorA, DEGREESSTRUM, powStrum, RETURNPOW);
-        powerMotorBack(motorA, DEGREESSTRUM, powStrum, RETURNPOW);
-        powerMotor(motorB, DEGREESCHORD, POWCHORD, RETURNPOW);
-        powerMotorBack(motorB, DEGREESCHORD, POWCHORD, RETURNPOW);
-        powerMotor(motorC, DEGREESPISTON, POWPISTON, RETURNPOW);
-        powerMotorBack(motorC, DEGREESPISTON, POWPISTON, RETURNPOW);
-        powerMotor(motorD, DEGREESPICK, POWPICK, RETURNPOW);
-        powerMotorBack(motorD, DEGREESPICK, POWPICK, RETURNPOW);
-
-        */
+	powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, pick, prevPick);
+	powerMotor(motorB, DEGREESSTRUM, POWSTRUM, RETURNPOW);
+	powerMotor(motorC, DEGREESPISTON, POWPISTON, RETURNPOW);
+	powerMotor(motorD, DEGREESCHORD, POWCHORD, RETURNPOW);
+	powerMotorBack(motorC, DEGREESPISTON, POWPISTON, RETURNPOW);
+	powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, pick, prevPick);
+	powerMotorBack(motorB, DEGREESSTRUM, POWSTRUM, RETURNPOW);
+	powerMotor(motorC, DEGREESPISTON, POWPISTON, RETURNPOW);
+	powerMotor(motorD, DEGREESCHORD, POWCHORD, RETURNPOW);
+	powerMotorBack(motorC, DEGREESPISTON, POWPISTON, RETURNPOW);
     }
     eraseDisplay();
     displayBigTextLine(4, "Program ended");
