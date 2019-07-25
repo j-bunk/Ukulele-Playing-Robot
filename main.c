@@ -28,7 +28,7 @@ void powerMotor (int m1, int DEGREES, int POW, int RETURNPOW)
     wait10Msec(5);
 }
 
-void powerMotorStrum (int m1, int DEGREES, int POW, int RETURNPOW, int beat)
+void powerMotorStrum (int m1, int DEGREES, int POW, int RETURNPOW, int beat, string newPosition)
 {
 	clearTimer(T1);
     /*nMotorEncoder[m1]=0;
@@ -41,9 +41,14 @@ void powerMotorStrum (int m1, int DEGREES, int POW, int RETURNPOW, int beat)
     while (nMotorEncoder[m1]>DEGREES)
     {}
     motor[m1]=0;*/
+    if (newPosition!="0")
+    {
+    motor[motorA]=5;
+  	}
 		powerMotor(m1,DEGREES,POW,RETURNPOW);
     while(time1[T1] < (beat/2))
     {}
+  	motor[motorA]=0;
 }
 
 //The RETURNPOW is to ensure it stops at the right place
@@ -51,20 +56,27 @@ void powerMotorStrum (int m1, int DEGREES, int POW, int RETURNPOW, int beat)
 //Input exact same parameters as powerMotor function but put a negative sign before degrees
 //I can change this and have the negative sign in the function itself if that makes it more intuitive
 
-void powerMotorBack (int m1, const int DEGREES, const int POW, const int RETURNPOW)
+void powerMotorBackStrum (int m1, int DEGREES, int POW, int RETURNPOW, int beat, string newPosition)
 {
-	clearTimer(T1);
-    nMotorEncoder[m1]=0;
-    motor[m1]=-POW;
+    clearTimer(T1);
+    /*nMotorEncoder[m1]=0;
+    motor[m1]=-POW;//
     while(nMotorEncoder[m1]>DEGREES)//e.g -180
     {}
     motor[m1]=0;
     wait10Msec(5);
-    motor[m1]=RETURNPOW;
+    motor[m1]=RETURNPOW; //returnpow should be negative and small/slow
     while (nMotorEncoder[m1]<DEGREES)
     {}
-    motor[m1]=0;
-    wait10Msec(5);
+    motor[m1]=0;*/
+    if (newPosition!="0")
+    {
+    motor[motorA]=5;
+  	}
+		powerMotorBack(m1,DEGREES,POW,RETURNPOW);
+    while(time1[T1] < beat/2)
+    {}
+  	motor[motorA]=0;
 }
 
 void powerMotorBackStrum (int m1, const int DEGREES, const int POW, const int RETURNPOW, int beat)
