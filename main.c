@@ -26,34 +26,24 @@ void powerMotor (int m1, int DEGREES, int POW, int RETURNPOW)
     wait10Msec(5);
 }
 
-void powerMotorStrum (int m1, int DEGREES, int POW, int RETURNPOW, int beat, string newPosition)
+void powerMotorStrum (int m1, int motorA, int DEGREES, int POW, int RETURNPOW, int beat, string newPosition)
 {
 	clearTimer(T1);
-    /*nMotorEncoder[m1]=0;
-    motor[m1]=POW;
-    while(nMotorEncoder[m1]<DEGREES)
-    {}
-    motor[m1]=0;
-    wait10Msec(5);
-    motor[m1]=-RETURNPOW;
-    while (nMotorEncoder[m1]>DEGREES)
-    {}
-    motor[m1]=0;*/
-    if (newPosition!="0")
-    {
-    motor[motorA]=5;
-  	}
+			   	if (newPosition!="0")
+			    {
+					    motor[motorA]=20;
+			  	}
 		powerMotor(m1,DEGREES,POW,RETURNPOW);
     while(time1[T1] < (beat/2))
     {}
-  	motor[motorA]=0;
+		motor[motorA] = 0;
 }
 
 //The RETURNPOW is to ensure it stops at the right place
 
 //Input exact same parameters as powerMotor function but put a negative sign before degrees
 //I can change this and have the negative sign in the function itself if that makes it more intuitive
-void powerMotorBack (int m1, const int DEGREES, const int POW, const int RETURNPOW)
+void powerMotorBack (int m1, int DEGREES, int POW, int RETURNPOW)
 {
 	clearTimer(T1);
     nMotorEncoder[m1]=0;
@@ -72,20 +62,10 @@ void powerMotorBack (int m1, const int DEGREES, const int POW, const int RETURNP
 void powerMotorBackStrum (int m1, int DEGREES, int POW, int RETURNPOW, int beat, string newPosition)
 {
     clearTimer(T1);
-    /*nMotorEncoder[m1]=0;
-    motor[m1]=-POW;//
-    while(nMotorEncoder[m1]>DEGREES)//e.g -180
-    {}
-    motor[m1]=0;
-    wait10Msec(5);
-    motor[m1]=RETURNPOW; //returnpow should be negative and small/slow
-    while (nMotorEncoder[m1]<DEGREES)
-    {}
-    motor[m1]=0;*/
-    if (newPosition!="0")
-    {
-    motor[motorA]=5;
-  	}
+		if (newPosition!="0")
+		{
+				motor[motorA]=20;
+		}
 		powerMotorBack(m1,DEGREES,POW,RETURNPOW);
     while(time1[T1] < beat/2)
     {}
@@ -236,8 +216,8 @@ task main()
     //Insert a read input file function
     //DEGREESSTRUM values might depend on song choice so if statement might be needed
 
-    const int DEGREESSTRUM=45, DEGREESPICK=35, DEGREESPISTON=180;
-    const int POWCHORD=100, POWPISTON=100, POWPICK=100, POWSTRUM=60;
+    const int DEGREESSTRUM=40, DEGREESPICK=35, DEGREESPISTON=180;
+    const int POWCHORD=50, POWPISTON=50, POWPICK=75, POWSTRUM=40;
     const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
 
 		displayString (6,"Press the start/stop button");
@@ -254,30 +234,25 @@ task main()
 		string initialPosition=one;
 		while (SensorValue[S1]==0 && newPosition!="-1")
 	    {
-	    	//motorA: Pick Mechanism
-	    	//motorB: Strumming Mechanism
-	    	//motorC: Piston Mechanism
-	    	//motorD: Rotation/Chord Mechanism
-			displayString(10, "We're in the loop");
-	    nMotorEncoder[motorA]=0;
-	    readTextPC(fin, newPosition);
-	    displayString(11, "New position is %s", newPosition);
-	    wait1Msec(2000);
-	    powerChord(motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
-	    					 initialPosition, newPosition, one, two, three, four);
-	   	powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, newPosition, initialPosition);
-	   	powerMotorStrum(motorB, DEGREESSTRUM, POWSTRUM, RETURNPOW, beat, newPosition);
-	   	time1[T1] = 0;
-	   	readTextPC(fin,newPosition);
-	   	powerChord(motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
-	    					 initialPosition, newPosition, one, two, three, four);
-	    powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, newPosition, initialPosition);
-	    powerMotorBackStrum(motorB, -DEGREESSTRUM, POWSTRUM, RETURNPOW, beat, newPosition);
+		    	//motorA: Pick Mechanism
+		    	//motorB: Strumming Mechanism
+		    	//motorC: Piston Mechanism
+		    	//motorD: Rotation/Chord Mechanism
+			    readTextPC(fin, newPosition);
+			    powerChord(motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
+			    					 initialPosition, newPosition, one, two, three, four);
+					powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, newPosition, initialPosition);
+			   	powerMotorStrum(motorB, motorA, DEGREESSTRUM, POWSTRUM, RETURNPOW, beat, newPosition);
+			   	readTextPC(fin,newPosition);
+			   	powerChord(motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
+			    					 initialPosition, newPosition, one, two, three, four);
+			    powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, newPosition, initialPosition);
+			    powerMotorBackStrum(motorB, -DEGREESSTRUM, POWSTRUM, RETURNPOW, beat, newPosition);
 	    }
 	    newPosition = one;
-	powerChord(motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW, initialPosition, newPosition, one, two, three, four);
-	powerMotorBackStrum(motorB, -DEGREESSTRUM, POWSTRUM, RETURNPOW, beat, newPosition);
-	powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, newPosition, initialPosition);
+			powerChord(motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW, initialPosition, newPosition, one, two, three, four);
+			powerMotorBackStrum(motorB, -DEGREESSTRUM, POWSTRUM, RETURNPOW, beat, newPosition);
+			powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, newPosition, initialPosition);
 
 	    eraseDisplay();
 	    displayBigTextLine(4, "Program ended");
