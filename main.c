@@ -121,14 +121,12 @@ void songChoice (string&songFile, string&songName, string nameRed, string nameBl
         songFile =RED;
 	songName = nameRed;
         displayString(9, "Red");
-	fin = fRed;
     }
     else if (SensorValue[S3] == 2) //(SensorValue[SColor]==(int)color) //or another more distinct color
     {
         songFile=BLUE;
         displayString(9, "Blue");
 	songName = nameBlue;
-	fin = fBlue;
     }
     else
     {
@@ -228,36 +226,30 @@ task main()
 	float beat = 0;
 	TFileHandle fRed;
 	TFileHandle fBlue;
-	TFileHandle fin;
 	openReadPC(fRed, RED);
 	openReadPC(fBlue, BLUE);
     init(fRed, fBlue, S1, S2, S3, songRed, songBlue); //STouch=S1, SUS=S2, SColor=S3
     waitUltra(S2, songRed, songBlue);
-	songChoice (songFile, songName, nameRed, nameBlue, RED, BLUE, fin, fBlue, fRed);
-    readFileInit (fin, beat, songName, MINTOMSEC, one, two, three, four);
-    //beat = ReadFile(S3);
-
+	songChoice (songFile, songName, nameRed, nameBlue, RED, BLUE, fBlue, fRed);
+	if(songFile == RED)
+	{
+		readFileInit (fRed, beat, songName, MINTOMSEC, one, two, three, four);
+	}
+	else
+	{
+		readFileInit(fBlue, beat, songName, MINTOMSEC, one, two, three, four);
+	}
     //Insert a read input file function
     //DEGREESSTRUM values might depend on song choice so if statement might be needed
 
     const int DEGREESSTRUM=45, DEGREESPICK=35, DEGREESPISTON=180;
     const int POWCHORD=100, POWPISTON=100, POWPICK=100, POWSTRUM=60;
     const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
-	
-    bool fileCheck = openReadPC(fin,songName);
 
-    if(!fileCheck)
-    {
-        displayString(5, "Song cannot be found");
-        wait1Msec(5000);
-    }
+	displayString (6,"Press the start/stop button to play");
 
-	
-	readFileInit(fin, beat, songName, MINTOMSEC, one, two, three, four);
-		displayString (6,"Press the start/stop button to play");
-
-		while (SensorValue[S1]==0){}
-		while (SensorValue[S1]==1){}
+	while (SensorValue[S1]==0){}
+	while (SensorValue[S1]==1){}
 		//eraseDisplay();
 	  //displayBigTextLine(3, "Now Playing: %s", songName);
 		/*if (song=="Riptide_Chords.txt")
@@ -269,24 +261,38 @@ task main()
 			displayBigTextLine(6, "I'm Yours");
 		}
 	*/
-		string newPosition = "";
-		string initialPosition=one;
-		while (SensorValue[S1]==0 || newPosition=="-1")
+	string newPosition = "";
+	string initialPosition=one;
+	while (SensorValue[S1]==0 || newPosition=="-1")
 	    {
 	    	//motorA: Pick Mechanism
 	    	//motorB: Strumming Mechanism
 	    	//motorC: Piston Mechanism
 	    	//motorD: Rotation/Chord Mechanism
 	    
-	    nMotorEncoder[motorA]=0;
-	    readTextPC(fin,newPosition);
+	   nMotorEncoder[motorA]=0;
+	if(songFile == RED)
+	{
+	   readTextPC(fRed,newPosition);
+	}
+	else
+	{
+		readTextPC(fBlue,newPosition);
+	}
 	    powerChord(motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
 	    					 initialPosition, newPosition, one, two, three, four);
 	   	powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, newPosition, initialPosition);
 	   	powerMotorStrum(motorB, DEGREESSTRUM, POWSTRUM, RETURNPOW, beat);
 	   	time1[T1] = 0;
-	   	readTextPC(fin,newPosition);
-	   	powerChord(motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
+	if(songFile == RED)
+	{
+	   readTextPC(fRed,newPosition);
+	}
+	else
+	{
+		readTextPC(fBlue,newPosition);
+	}
+	   powerChord(motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
 	    					 initialPosition, newPosition, one, two, three, four);
 	    powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, newPosition, initialPosition);
 	    powerMotorBackStrum(motorB, -DEGREESSTRUM, POWSTRUM, RETURNPOW, beat);
