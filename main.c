@@ -3,10 +3,15 @@
 
 #include "EV3_FileIO.c"
 
-void init(int STouch, int SUS, int SColor)
+void init(int STouch, int SUS, int SGyro,int SColor)
 {
     SensorType[STouch]=sensorEV3_Touch;
     SensorType[SUS]=sensorEV3_Ultrasonic;
+    //SensorType[SGyro]=sensorEV3_Gyro;
+    //SensorMode[SGyro]=modeEV3Gyro_RateAndAngle;
+    //while (getGyroRate(SGyro) != 0) {}
+    //resetGyro(SGyro);
+    wait1Msec(50);
     SensorType[SColor]=sensorEV3_Color;
     SensorMode[SColor]=modeEV3Color_Color;
 }
@@ -79,12 +84,44 @@ void waitUltra(int SUS)
 	while(SensorValue(SUS)>=80)
 	{}
 	displayString(5, "Hello!");
-	displayString(7, "Please insert a card");
+	displayString(7, "Press the left button to"); 
+	displayString(8, "play Riptide and the right");
+	displayString(9, "button to play I'm Yours");
 }
 
-void songChoice (TFileHandle&fin, string&songFile, string RED, string BLUE, string&songName) //white is 6 and red is 5
-{
-    /*while (SensorValue[S3]==6)
+void songChoice (string&songFile, string RED, string BLUE) 
+{  
+	while (!getButtonPress(buttonRight)&& !getButtonPress(buttonLeft)){}
+	if (getButtonPress(buttonLeft))
+	{
+		songFile = RED;
+  }
+	else
+	{
+		songFile=BLUE;
+	}
+}
+		/*wait1Msec(50);
+		while(!getGyroDegrees(sGyro)>35 || !getGyroDegrees(sGyro)>-35){}
+		if (getGyroDegrees(sGyro)>35)
+		{
+		songFile = RED;
+    displayString(9, "Red");
+    wait1Msec(2000);
+  	}
+  	else if (getGyroDegrees(sGyro)<-35)  
+  	{
+  			songFile=BLUE;
+        displayString(9, "Blue");
+        wait1Msec(2000);
+     }
+     else
+     {
+       displayString(10, "Error");
+       wait1Msec(2000);
+     }
+  		
+    /*while (SensorValue[S3]==6) //white is 6 and red is 5
     {
     	displayString(9, "Stuck in white");
     }
@@ -94,9 +131,7 @@ void songChoice (TFileHandle&fin, string&songFile, string RED, string BLUE, stri
     }*/
     //if (SensorValue[S3]==5)
     //{
-        songFile = RED;
-        displayString(9, "Red");
-        wait1Msec(2000);
+      
     //}
     /*else if (SensorValue[S3] == 2) //(SensorValue[SColor]==(int)color) //or another more distinct color
     {
@@ -109,7 +144,7 @@ void songChoice (TFileHandle&fin, string&songFile, string RED, string BLUE, stri
     	displayString(2, "Colour detection failed. ");
     	wait1Msec(2000);
     }*/
-}
+
 
 void readFileInit (TFileHandle&fin, float&beat, string&songName, int MINTOMSEC, string&one, string&two, string&three, string&four)
 {
@@ -132,12 +167,10 @@ void powerMotorPick(int motorA, int DEGREESPICK, int POWPICK, int RETURNPOW, str
 	else if(newPosition == "0")
 	{
 		powerMotorBack(motorA, -DEGREESPICK, POWPICK, RETURNPOW);
-		eraseDisplay();
 	}
 	else
 	{
 		powerMotor(motorA, DEGREESPICK, POWPICK, RETURNPOW);
-		displayString(14,"Moving in");
 	}
 	prevPick = newPosition;
 	wait1Msec(50);
@@ -206,25 +239,25 @@ task main()
 	string RED = "Red.txt", BLUE = "Blue.txt";
 	float beat = 0;
 	TFileHandle fin;
-    init(S1, S2, S3); //STouch=S1, SUS=S2, SColor=S3
-    waitUltra(S2);
-	songChoice (fin, songFile, RED, BLUE, songName);
+  init(S1, S2, S3, S4); //STouch=S1, SUS=S2, SGyro=S3, SColor=S4
+  waitUltra(S2);
+	songChoice (songFile, RED, BLUE);
 	openReadPC(fin, songFile);
-	  /*bool fileCheck = openReadPC(fin,songName);
+	 /*bool fileCheck = openReadPC(fin,songName);
 
-    if(!fileCheck)
-    {
-        displayString(5, "Song cannot be found");
-        wait1Msec(5000);
-    }*/
-    readFileInit (fin, beat, songName, MINTOMSEC, one, two, three, four);
+   if(!fileCheck)
+   {
+       displayString(5, "Song cannot be found");
+       wait1Msec(5000);
+   }*/
+   readFileInit (fin, beat, songName, MINTOMSEC, one, two, three, four);
 
-    //Insert a read input file function
-    //DEGREESSTRUM values might depend on song choice so if statement might be needed
+   //Insert a read input file function
+   //DEGREESSTRUM values might depend on song choice so if statement might be needed
 
-    const int DEGREESSTRUM=40, DEGREESPICK=35, DEGREESPISTON=180;
-    const int POWCHORD=50, POWPISTON=50, POWPICK=75, POWSTRUM=50;
-    const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
+   const int DEGREESSTRUM=40, DEGREESPICK=35, DEGREESPISTON=180;
+   const int POWCHORD=50, POWPISTON=50, POWPICK=75, POWSTRUM=60;
+   const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
 
 		displayString (6,"Press the start/stop button");
 		displayString (7,"to play");
@@ -252,14 +285,12 @@ task main()
 		    	//motorC: Piston Mechanism
 		    	//motorD: Rotation/Chord Mechanism
 			    readTextPC(fin, newPosition);
-			    displayString(10, "New=%s Initial=%s",newPosition, initialPosition);
 			    powerChord(motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
 			    					 initialPosition, newPosition, one, two, three, four);
 					powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, newPosition, prevPick);
 					wait1Msec(50);
 			   	powerMotorBackStrum(motorB, -DEGREESSTRUM, POWSTRUM, RETURNPOW, beat, newPosition);
 			   	readTextPC(fin,newPosition);
-			   	displayString(11, "New=%s Initial=%s",newPosition, initialPosition);
 			   	powerChord(motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW,
 			    					 initialPosition, newPosition, one, two, three, four);
 			    powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, newPosition, prevPick);
@@ -274,5 +305,4 @@ task main()
 	    eraseDisplay();
 	    displayBigTextLine(4, "Program ended");
 	    wait1Msec(3000);
-	    //End by calibrating
 }
