@@ -1,21 +1,16 @@
 //Work in RobotC then copy and paste your code here and push to Github
 //If your working on a specific function you can create a branch work on it then merge it
 
-string song = "";
-string one=" ", two=" ", three=" ", four=" ";
-const int MINTOMSEC = 60000;
-//#include "PC_FileIO.c"
 #include "EV3_FileIO.c"
 
-//#include "Green.txt"
-//#include "Red.txt"
-
-void init(int STouch, int SUS, int SColor)
+void init(TFileHandle&fRed, TFileHandle&fBlue, int STouch, int SUS, int SColor, string&songRed, string&songBlue)
 {
     SensorType[STouch]=sensorEV3_Touch;
     SensorType[SUS]=sensorEV3_Ultrasonic;
     SensorType[SColor]=sensorEV3_Color;
     SensorMode[SColor]=modeEV3Color_Color;
+	readTextPC(fRed, songRed);
+	readTextPC(fBlue, songBlue);
 }
 
 void powerMotor (int m1, int DEGREES, int POW, int RETURNPOW)
@@ -90,12 +85,12 @@ void powerMotorBackStrum (int m1, const int DEGREES, const int POW, const int RE
     {}
 }
 
-void waitUltra(int SUS)
+void waitUltra(int SUS, string nameRed, string nameBlue)
 {
 	while(SensorValue(SUS)>=80)
 	{}
-	displayString(3, "Green card is Riptide");
-	displayString(5, "Red card is I'm Yours");
+	displayString(3, "Blue card is %s", nameBlue);
+	displayString(5, "Red card is %s", nameRed);
 	displayString(7, "Please insert a card");
 }
 
@@ -104,25 +99,29 @@ float bpmCalc(float bpm)
     return MINTOMSEC/bpm;
 }
 
-void songChoice (string&song) //white is 6 and red is 5
+void songChoice (string&songFile, string&songName, string nameRed, string nameBlue, string RED, string BLUE, TFileHandle&fin, TFileHand&fBlue, TfileHandle&fRed) //white is 6 and red is 5
 {
     while (SensorValue[S3]==6) 
     {
     	displayString(9, "Stuck in white");
     }
-    while (SensorValue[S3]!=5)
+    while (SensorValue[S3]!=5 || SensorValue[S3] != 2)
     {
     	displayString(9, "Stuck in decision");
     }
     if (SensorValue[S3]==5)
     {
-        song = "Red.txt";
+        songFile =RED;
+	songName = nameRed;
         displayString(9, "Red");
+	fin = fRed;
     }
-    else if (SensorValue[S3] == 1) //(SensorValue[SColor]==(int)color) //or another more distinct color
+    else if (SensorValue[S3] == 2) //(SensorValue[SColor]==(int)color) //or another more distinct color
     {
-        song="Green.txt";
-        displayString(9, "Green");
+        songFile=BLUE;
+        displayString(9, "Blue");
+	songName = nameBlue;
+	fin = fBlue;
     }
     else
     {
@@ -130,11 +129,9 @@ void songChoice (string&song) //white is 6 and red is 5
     }
 }
 
-void readFileInit (TFileHandle&fin, float&beat)
+void readFileInit (TFileHandle&fin, float&beat, string songName)
 {
-    string songName = "abc";
     int bpm = 1;
-    readTextPC(fin, songName);
     eraseDisplay();
     displayString(2, "Up next: %s", songName);
     readIntPC(fin, bpm);
@@ -218,10 +215,18 @@ void powerChord (int motorC, int motorD, int DEGREESPISTON, int POWPISTON,
 
 task main()
 {
-    init(S1, S2, S3); //STouch=S1, SUS=S2, SColor=S3
-    waitUltra(S2);
-
-    //ReadFile(S3);
+	string songRed = "", songBlue = "", songFile = "", one="", two="", three="", four="";
+	const int MINTOMSEC = 60000;
+	const string RED = "Red.txt", BLUE = "Blue.txt";
+	TFileHandle fRed;
+	TFileHandle fBlue;
+	TFileHandle fin;
+	openReadPC(fRed, RED);
+	openReadPC(fBlue, BLUE);
+    init(fRed, fBlue, S1, S2, S3, songRed, songBlue); //STouch=S1, SUS=S2, SColor=S3
+    waitUltra(S2, songRed, songBlue);
+	songChoice (songFile, songName, nameRed, nameBlue, RED, BLUE, fin, fBlue, fRed);
+    readFileInit (fin, beat, songName);
     //int beat = 0;
     //beat = ReadFile(S3);
 
@@ -232,22 +237,21 @@ task main()
     const int POWCHORD=100, POWPISTON=100, POWPICK=100, POWSTRUM=60;
     const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
 		float beat = 0;
-		TFileHandle fin;
-    bool fileCheck = openReadPC(fin,song);
+	
+    bool fileCheck = openReadPC(fin,songName);
 
     if(!fileCheck)
     {
         displayString(5, "Song cannot be found");
         wait1Msec(5000);
     }
-    
-		songChoice (song);
-		readFileInit(fin, beat);
+
+	
+	readFileInit(fin, beat);
 		displayString (6,"Press the start/stop button to play");
 
 		while (SensorValue[S1]==0){}
 		while (SensorValue[S1]==1){}
-		//You insert the card and then press the start button to start
 		//eraseDisplay();
 	  //displayBigTextLine(3, "Now Playing: %s", songName);
 		/*if (song=="Riptide_Chords.txt")
@@ -281,6 +285,10 @@ task main()
 	    powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, newPosition, initialPosition);
 	    powerMotorBackStrum(motorB, -DEGREESSTRUM, POWSTRUM, RETURNPOW, beat);
 	    }
+	powerChord(motorC, motorD, DEGREESPISTON, POWPISTON, POWCHORD, RETURNPOW, initialPosition, one);
+	powerMotorBackStrum(motorB, -DEGREESSTRUM, POWSTRUM, RETURNPOW, beat);
+	powerMotorPick(motorA, DEGREESPICK, POWPICK, RETURNPOW, newPosition, initialPosition);
+	
 	    eraseDisplay();
 	    displayBigTextLine(4, "Program ended");
 	    wait1Msec(3000);
