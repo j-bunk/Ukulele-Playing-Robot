@@ -84,13 +84,13 @@ void waitUltra(int SUS)
 	while(SensorValue(SUS)>=80)
 	{}
 	displayString(5, "Hello!");
-	displayString(7, "Press the left button to"); 
+	displayString(7, "Press the left button to");
 	displayString(8, "play Riptide and the right");
 	displayString(9, "button to play I'm Yours");
 }
 
-void songChoice (string&songFile, string RED, string BLUE) 
-{  
+void songChoice (string&songFile, string RED, string BLUE)
+{
 	while (!getButtonPress(buttonRight)&& !getButtonPress(buttonLeft)){}
 	if (getButtonPress(buttonLeft))
 	{
@@ -109,7 +109,7 @@ void songChoice (string&songFile, string RED, string BLUE)
     displayString(9, "Red");
     wait1Msec(2000);
   	}
-  	else if (getGyroDegrees(sGyro)<-35)  
+  	else if (getGyroDegrees(sGyro)<-35)
   	{
   			songFile=BLUE;
         displayString(9, "Blue");
@@ -120,7 +120,7 @@ void songChoice (string&songFile, string RED, string BLUE)
        displayString(10, "Error");
        wait1Msec(2000);
      }
-  		
+
     /*while (SensorValue[S3]==6) //white is 6 and red is 5
     {
     	displayString(9, "Stuck in white");
@@ -131,7 +131,7 @@ void songChoice (string&songFile, string RED, string BLUE)
     }*/
     //if (SensorValue[S3]==5)
     //{
-      
+
     //}
     /*else if (SensorValue[S3] == 2) //(SensorValue[SColor]==(int)color) //or another more distinct color
     {
