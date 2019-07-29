@@ -252,12 +252,9 @@ task main()
    }*/
    readFileInit (fin, beat, songName, MINTOMSEC, one, two, three, four);
 
-   //Insert a read input file function
-   //DEGREESSTRUM values might depend on song choice so if statement might be needed
-
    const int DEGREESSTRUM=40, DEGREESPICK=35, DEGREESPISTON=180;
    const int POWCHORD=50, POWPISTON=50, POWPICK=75, POWSTRUM=60;
-   const int RETURNPOW=10; //Should each mechanism have different RETURNPOW values?
+   const int RETURNPOW=10;
 
 		displayString (6,"Press the start/stop button");
 		displayString (7,"to play");
