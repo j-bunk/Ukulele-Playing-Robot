@@ -1,6 +1,6 @@
 #include "EV3_FileIO.c"
 
-void init(int STouch, int SUS, int SGyro,int SColor)
+void init(int STouch, int SUS)// int SGyro,int SColor)
 {
     SensorType[STouch]=sensorEV3_Touch;
     SensorType[SUS]=sensorEV3_Ultrasonic;
@@ -9,8 +9,8 @@ void init(int STouch, int SUS, int SGyro,int SColor)
     //while (getGyroRate(SGyro) != 0) {}
     //resetGyro(SGyro);
     wait1Msec(50);
-    SensorType[SColor]=sensorEV3_Color;
-    SensorMode[SColor]=modeEV3Color_Color;
+    //SensorType[SColor]=sensorEV3_Color;
+    //SensorMode[SColor]=modeEV3Color_Color;
 }
 
 void waitUltra(int SUS)
