@@ -1,6 +1,3 @@
-//Work in RobotC then copy and paste your code here and push to Github
-//If your working on a specific function you can create a branch work on it then merge it
-
 #include "EV3_FileIO.c"
 
 void init(int STouch, int SUS, int SGyro,int SColor)
@@ -14,69 +11,6 @@ void init(int STouch, int SUS, int SGyro,int SColor)
     wait1Msec(50);
     SensorType[SColor]=sensorEV3_Color;
     SensorMode[SColor]=modeEV3Color_Color;
-}
-
-void powerMotor (int m1, int DEGREES, int POW, int RETURNPOW)
-{
-    nMotorEncoder[m1]=0;
-    motor[m1]=POW;
-    while(nMotorEncoder[m1]<DEGREES)
-    {}
-    motor[m1]=0;
-    wait1Msec(50);
-    motor[m1]=-RETURNPOW;
-    while (nMotorEncoder[m1]>DEGREES)
-    {}
-    motor[m1]=0;
-    wait10Msec(5);
-}
-
-void powerMotorStrum (int m1, int motorA, int DEGREES, int POW, int RETURNPOW, int beat, string newPosition)
-{
-	clearTimer(T1);
-			   	if (newPosition!="0")
-			    {
-					    motor[motorA]=5;
-			  	}
-		powerMotor(m1,DEGREES,POW,RETURNPOW);
-    while(time1[T1] < (beat/2))
-    {}
-		motor[motorA] = 0;
-		wait1Msec(50);
-}
-
-//The RETURNPOW is to ensure it stops at the right place
-
-//Input exact same parameters as powerMotor function but put a negative sign before degrees
-//I can change this and have the negative sign in the function itself if that makes it more intuitive
-void powerMotorBack (int m1, int DEGREES, int POW, int RETURNPOW)
-{
-	clearTimer(T1);
-    nMotorEncoder[m1]=0;
-    motor[m1]=-POW;
-    while(nMotorEncoder[m1]>DEGREES)//e.g -180
-    {}
-    motor[m1]=0;
-    wait10Msec(5);
-    motor[m1]=RETURNPOW;
-    while (nMotorEncoder[m1]<DEGREES)
-    {}
-    motor[m1]=0;
-    wait10Msec(5);
-}
-
-void powerMotorBackStrum (int m1, int DEGREES, int POW, int RETURNPOW, int beat, string newPosition)
-{
-    clearTimer(T1);
-		if (newPosition!="0")
-		{
-				motor[motorA]=5;
-		}
-		powerMotorBack(m1,DEGREES,POW,RETURNPOW);
-    while(time1[T1] < beat/2)
-    {}
-  	motor[motorA]=0;
-  	wait1Msec(50);
 }
 
 void waitUltra(int SUS)
@@ -145,7 +79,6 @@ void songChoice (string&songFile, string RED, string BLUE)
     	wait1Msec(2000);
     }*/
 
-
 void readFileInit (TFileHandle&fin, float&beat, string&songName, int MINTOMSEC, string&one, string&two, string&three, string&four)
 {
     int bpm = 1;
@@ -160,20 +93,37 @@ void readFileInit (TFileHandle&fin, float&beat, string&songName, int MINTOMSEC, 
 		readTextPC(fin, four);
 }
 
-void powerMotorPick(int motorA, int DEGREESPICK, int POWPICK, int RETURNPOW, string newPosition, string&prevPick)
+void powerMotor (int m1, int DEGREES, int POW, int RETURNPOW)
 {
-	if((newPosition == prevPick) || (newPosition !="0" && prevPick!="0"))
-	{}
-	else if(newPosition == "0")
-	{
-		powerMotorBack(motorA, -DEGREESPICK, POWPICK, RETURNPOW);
-	}
-	else
-	{
-		powerMotor(motorA, DEGREESPICK, POWPICK, RETURNPOW);
-	}
-	prevPick = newPosition;
-	wait1Msec(50);
+    nMotorEncoder[m1]=0;
+    motor[m1]=POW;
+    while(nMotorEncoder[m1]<DEGREES)
+    {}
+    motor[m1]=0;
+    wait1Msec(50);
+    motor[m1]=-RETURNPOW;
+    while (nMotorEncoder[m1]>DEGREES)
+    {}
+    motor[m1]=0;
+    wait10Msec(5);
+}
+//The RETURNPOW is to ensure it stops at the right place
+
+//Input exact same parameters as powerMotor function but put a negative sign before degrees
+void powerMotorBack (int m1, int DEGREES, int POW, int RETURNPOW)
+{
+	clearTimer(T1);
+    nMotorEncoder[m1]=0;
+    motor[m1]=-POW;
+    while(nMotorEncoder[m1]>DEGREES)//e.g -180
+    {}
+    motor[m1]=0;
+    wait10Msec(5);
+    motor[m1]=RETURNPOW;
+    while (nMotorEncoder[m1]<DEGREES)
+    {}
+    motor[m1]=0;
+    wait10Msec(5);
 }
 
 int rotationChord (string & initialPosition, string newPosition, string one, string two, string three, string four)
@@ -231,6 +181,49 @@ void powerChord (int motorC, int motorD, int DEGREESPISTON, int POWPISTON,
 	}
 }
 
+void powerMotorPick(int motorA, int DEGREESPICK, int POWPICK, int RETURNPOW, string newPosition, string&prevPick)
+{
+	if((newPosition == prevPick) || (newPosition !="0" && prevPick!="0"))
+	{}
+	else if(newPosition == "0")
+	{
+		powerMotorBack(motorA, -DEGREESPICK, POWPICK, RETURNPOW);
+	}
+	else
+	{
+		powerMotor(motorA, DEGREESPICK, POWPICK, RETURNPOW);
+	}
+	prevPick = newPosition;
+	wait1Msec(50);
+}
+
+void powerMotorStrum (int motorB, int motorA, int DEGREES, int POW, int RETURNPOW, int beat, string newPosition)
+{
+	clearTimer(T1);
+			   	if (newPosition!="0")
+			    {
+					    motor[motorA]=5;
+			  	}
+		powerMotor(m1,DEGREES,POW,RETURNPOW);
+    while(time1[T1] < (beat/2))
+    {}
+		motor[motorA] = 0;
+		wait1Msec(50);
+}
+
+void powerMotorBackStrum (int motorB, int motorA, int DEGREES, int POW, int RETURNPOW, int beat, string newPosition)
+{
+    clearTimer(T1);
+		if (newPosition!="0")
+		{
+				motor[motorA]=5;
+		}
+		powerMotorBack(m1,DEGREES,POW,RETURNPOW);
+    while(time1[T1] < beat/2)
+    {}
+  	motor[motorA]=0;
+  	wait1Msec(50);
+}
 
 task main()
 {
