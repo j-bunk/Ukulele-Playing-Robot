@@ -1,1 +1,1 @@
-# We're creating a ukulele-playing robot! :D
+# We're made a ukulele-playing robot! :D
