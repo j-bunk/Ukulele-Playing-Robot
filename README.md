@@ -5,16 +5,16 @@ We designed and built a ukulele playing :). It included an arm that would strum 
 A video with the audio can be found under the video folder
 
 ### Robot Playing
-![Alt text](images\robotPlaying.gif)
+![Alt text](images\robotPlaying.gif?raw=true)
 
 ### Front View
-![Alt text](images\frontView.PNG )
+![Alt text](https://github.com/j-bunk/uku-bot/blob/master/images/chordBox.PNG)
 
 ### Close Up 
-![Alt text](images\closeUpStrum.png)
+![Alt text](images\closeUpStrum.png?raw=true)
 
 ### Configurable 3D Printed chord box
-![Alt text](images\chordBox.PNG)
+![Alt text](images\chordBox.PNG?raw=true)
 
 ### Ukulele Stand
-![Alt text](images\standFront.png)
+![Alt text](images\standFront.png?raw=true)
