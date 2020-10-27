@@ -8,7 +8,7 @@ A video with the audio can be found under the video folder
 ![Alt text](https://github.com/j-bunk/uku-bot/blob/master/images/robotPlaying.gif)
 
 ### Front View
-![Alt text](https://github.com/j-bunk/uku-bot/blob/master/images/chordBox.PNG)
+![Alt text](https://github.com/j-bunk/uku-bot/blob/master/images/frontView.PNG)
 
 ### Close Up 
 ![Alt text](https://github.com/j-bunk/uku-bot/blob/master/images/closeUpStrum.png)
