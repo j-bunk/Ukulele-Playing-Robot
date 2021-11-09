@@ -5,7 +5,10 @@ We designed and built a ukulele playing robot :). It included an arm that would 
 A video with the audio can be found under the `videos` folder
 
 ### Robot Playing
+https://user-images.githubusercontent.com/51224641/140865361-cd8eedc8-03a9-465e-91c2-d2fed225c9f1.MOV
+
 ![Alt text](https://github.com/j-bunk/uku-bot/blob/master/images/robotPlaying.gif)
+
 
 ### Front View
 ![Alt text](https://github.com/j-bunk/uku-bot/blob/master/images/frontView.PNG)
